@@ -130,6 +130,7 @@ const SESSION_LIST_ALLOWED_FIELDS = [
   'share',
   'metadata',
   'project',
+  'location',
 ];
 
 const sanitizeSessionListItem = (session) => {
