@@ -1195,8 +1195,8 @@ const ChatInputComponent: React.FC<ChatInputProps> = ({ onOpenSettings, scrollTo
             'init', 'review', 'undo', 'redo', 'timeline', 'compact', 'summary', 'workspace-review', 'plan-feature', 'catch-up', 'debug', 'weigh', 'explore',
         ]);
         if (!isMobile && !isVSCodeRuntime()) names.add('handoff-review');
-        for (const command of availableCommands) names.add(command.name.toLowerCase());
-        for (const skill of availableSkills) names.add(skill.name.toLowerCase());
+        for (const command of availableCommands) { if (command?.name) names.add(command.name.toLowerCase()); }
+        for (const skill of availableSkills) { if (skill?.name) names.add(skill.name.toLowerCase()); }
         return names;
     }, [availableCommands, availableSkills, isMobile]);
 
