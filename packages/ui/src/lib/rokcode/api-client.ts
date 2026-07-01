@@ -258,6 +258,7 @@ export function createRokcodeClient(options: RokcodeClientOptions): RokcodeClien
     app: { agents: () => http.get(`${API_PREFIX}/agent`) },
     lsp: { status: () => http.get(`${API_PREFIX}/lsp/status`) },
     path: { get: () => http.get<{ home: string; worktree?: string; directory?: string; [key: string]: unknown }>(`${API_PREFIX}/path`) },
+    experimental: { session: { list: (input: any) => http.get<any[]>(`${API_PREFIX}/session${buildQuery(input)}`) } },
   } satisfies RokcodeClient
 }
 

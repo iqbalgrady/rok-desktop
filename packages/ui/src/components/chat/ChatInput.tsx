@@ -1180,7 +1180,7 @@ const ChatInputComponent: React.FC<ChatInputProps> = ({ onOpenSettings, scrollTo
     const sendableAttachedFiles = attachedFiles;
 
     const knownAgentNames = React.useMemo(
-        () => new Set((agents || []).filter(Boolean).map((agent) => agent.name.toLowerCase())),
+        () => new Set((agents || []).filter(agent => agent && typeof agent.name === "string").map(agent => agent.name.toLowerCase())),
         [agents]
     );
     const knownAgentNamesRef = React.useRef(knownAgentNames);
