@@ -62,7 +62,7 @@ export const shouldShowRokDesktopUpdateToast = (
 };
 
 /**
- * Coerces the `detail.version` carried by an `rok-desktop:opencode-update-available`
+ * Coerces the `detail.version` carried by an `rok-desktop:rokcode-update-available`
  * CustomEvent into a trimmed string, or returns `''` when the payload is
  * missing or shaped unexpectedly.
  *

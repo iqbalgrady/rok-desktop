@@ -156,11 +156,11 @@ export const RokDesktopUpdateToast: React.FC = () => {
       timeoutIds.push(setTimeout(() => { void checkForUpdate(0); }, INITIAL_CHECK_DELAY_MS));
     }
 
-    window.addEventListener('rok-desktop:opencode-update-available', onUpdateAvailable);
+    window.addEventListener('rok-desktop:rokcode-update-available', onUpdateAvailable);
     return () => {
       cancelled = true;
       for (const timeoutId of timeoutIds) clearTimeout(timeoutId);
-      window.removeEventListener('rok-desktop:opencode-update-available', onUpdateAvailable);
+      window.removeEventListener('rok-desktop:rokcode-update-available', onUpdateAvailable);
     };
   }, [runUpgrade, showRokcodeUpdateNotifications, t]);
 

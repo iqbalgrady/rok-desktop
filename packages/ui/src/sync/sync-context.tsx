@@ -1577,7 +1577,7 @@ function handleEvent(
 
 const dispatchRokcodeUpdateAvailable = (payload: { version: string }) => {
   if (typeof window === "undefined") return
-  window.dispatchEvent(new CustomEvent("rok-desktop:opencode-update-available", { detail: payload }))
+  window.dispatchEvent(new CustomEvent("rok-desktop:rokcode-update-available", { detail: payload }))
 }
 
 export function SyncProvider(props: {
