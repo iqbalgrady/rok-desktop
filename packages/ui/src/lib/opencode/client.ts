@@ -1,5 +1,6 @@
 import { createRokcodeClient } from "@/lib/rokcode/api-client";
-import type { RokcodeClient, Session, SessionListResult } from "@/lib/rokcode/api-client";
+import type { RokcodeClient } from "@/lib/rokcode/api-client";
+import type { Session, Agent, Provider, Config } from "@/lib/rokcode/types";
 import type { FilesAPI } from "../api/types";
 import { getDesktopHomeDirectory } from "../desktop";
 import type { PermissionRequest } from "@/types/permission";

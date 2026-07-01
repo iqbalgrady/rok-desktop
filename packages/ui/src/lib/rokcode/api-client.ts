@@ -3,8 +3,12 @@
 
 import { runtimeFetch } from "@/lib/runtime-fetch"
 import { getRuntimeUrlResolver } from "@/lib/runtime-url"
+import type { Session } from "@opencode-ai/sdk/v2"
 
 export { runtimeFetch }
+
+// Re-export Session type from SDK for client code that imports from here
+export type { Session } from "@opencode-ai/sdk/v2"
 
 const API_PREFIX = "/api"
 
@@ -89,34 +93,7 @@ class RokcodeHttpClient {
   }
 }
 
-// Session types — matched to rokcode server API response shapes
-export interface Session {
-  id: string
-  projectID?: string
-  title?: string
-  directory?: string
-  agent?: string
-  model?: string
-  location?: { directory?: string; workspaceID?: string }
-  subpath?: string
-  cost?: number
-  tokens?: {
-    input: number; output: number; reasoning: number
-    cache?: { read: number; write: number }
-  }
-  time?: { created: number; updated: number }
-  timeCreated?: number
-  timeUpdated?: number
-  worktree?: string
-  metadata?: Record<string, unknown>
-  [key: string]: unknown
-}
-
-export interface SessionListResult {
-  data: Session[]
-  nextCursor?: string
-}
-
+// Session creation input (doesn't exist in SDK types)
 export interface SessionCreateInput {
   id?: string
   agent?: string
@@ -130,6 +107,7 @@ export interface PromptDelivery {
   admittedSeq: number
   delivery: string
   timeCreated: number
+  prompt: { text: string; files?: unknown[]; agents?: unknown[] }
 }
 
 export interface PromptInput {
@@ -143,32 +121,47 @@ export interface PromptInput {
   resume?: boolean
 }
 
-// Event types
+export interface HistoryEvent {
+  id: string
+  type: string
+  durable: { aggregateID: string; seq: number; version: number }
+  data: { timestamp: number; sessionID: string; messageID?: string; prompt?: unknown; delivery?: string; [key: string]: unknown }
+}
+
+export interface StreamEvent {
+  type: string
+  properties?: Record<string, unknown>
+  [key: string]: unknown
+}
+
 export interface SseEvent {
   id?: string
   type: string
   data: Record<string, unknown>
 }
 
+// --- Client interface (simplified — returns unwrapped data) ---
 export interface RokcodeClient {
   session: {
-    list(input?: { workspace?: string; limit?: number; directory?: string; cursor?: string }): Promise<SessionListResult>
+    list(input?: { workspace?: string; limit?: number; directory?: string; cursor?: string }): Promise<Session[]>
     create(input: SessionCreateInput): Promise<Session>
     get(id: string): Promise<Session>
     prompt(id: string, input: PromptInput): Promise<PromptDelivery>
     abort(id: string): Promise<void>
     fork(id: string, input?: { messageID?: string }): Promise<Session>
     compact(id: string): Promise<void>
-    events(id: string, opts?: { signal?: AbortSignal; onEvent?: (e: SseEvent) => void }): Promise<{ stream: AsyncIterable<SseEvent> }>
-    history(id: string, opts?: { limit?: number; after?: string }): Promise<unknown>
+    events(id: string, opts?: { signal?: AbortSignal }): Promise<{ stream: AsyncIterable<SseEvent> }>
+    history(id: string, opts?: { limit?: number; after?: string }): Promise<HistoryEvent[]>
     context(id: string): Promise<unknown>
     interrupt(id: string): Promise<void>
+    active(): Promise<Record<string, { type: string }>>
+    get(id: string): Promise<Session>
+    delete(id: string): Promise<void>
+    update(id: string, input: Record<string, unknown>): Promise<void>
     stage(id: string, input: { messageID: string; files?: unknown[] }): Promise<void>
     clear(id: string): Promise<void>
     commit(id: string): Promise<void>
-    delete(id: string): Promise<void>
-    update(id: string, input: Record<string, unknown>): Promise<void>
-    status(): Promise<Record<string, unknown>>
+    status(id: string): Promise<{ type: string }>
     todo(id: string): Promise<unknown>
     summarize(id: string, input?: unknown): Promise<unknown>
     command(id: string, input: unknown): Promise<unknown>
@@ -182,9 +175,7 @@ export interface RokcodeClient {
   }
   global: {
     event(opts?: { signal?: AbortSignal }): Promise<{ stream: AsyncIterable<SseEvent> }>
-    config: {
-      get(): Promise<unknown>
-    }
+    config: { get(): Promise<unknown> }
   }
   config: {
     get(): Promise<unknown>
@@ -197,17 +188,18 @@ export interface RokcodeClient {
     list(): Promise<unknown>
   }
   file: {
-    read(path: string): Promise<unknown>
-    list(path: string): Promise<unknown>
+    read(input: { path: string }): Promise<unknown>
+    list(input: { path: string }): Promise<unknown>
+    write(input: { path: string; content: string }): Promise<void>
   }
   permission: {
     list(): Promise<unknown>
-    reply(id: string, response: unknown): Promise<void>
+    reply(input: { id: string; response: unknown }): Promise<void>
   }
   question: {
     list(): Promise<unknown>
-    reply(id: string, response: unknown): Promise<void>
-    reject(id: string): Promise<void>
+    reply(input: { id: string; response: unknown }): Promise<void>
+    reject(input: { id: string }): Promise<void>
   }
   tool: {
     ids(): Promise<string[]>
@@ -224,10 +216,13 @@ export interface RokcodeClient {
   app: {
     agents(): Promise<unknown>
   }
-  lsp: {
-    status(): Promise<unknown>
+    lsp: {
+      status(): Promise<unknown>
+    }
+    path: {
+      get(): Promise<{ home: string; [key: string]: unknown }>
+    }
   }
-}
 
 // --- SSE stream helper ---
 async function* sseStream(response: Response): AsyncIterable<SseEvent> {
@@ -278,7 +273,7 @@ export function createRokcodeClient(options: RokcodeClientOptions): RokcodeClien
 
   return {
     session: {
-      list: (input) => http.get<SessionListResult>(`${API_PREFIX}/session${buildQuery(input)}`),
+      list: (input) => http.get<Session[]>(`${API_PREFIX}/session${buildQuery(input)}`),
       create: (input) => http.post<Session>(`${API_PREFIX}/session`, input),
       get: (id) => http.get<Session>(`${API_PREFIX}/session/${id}`),
       prompt: (id, input) => http.post<PromptDelivery>(`${API_PREFIX}/session/${id}/prompt`, input),
@@ -287,18 +282,18 @@ export function createRokcodeClient(options: RokcodeClientOptions): RokcodeClien
       compact: (id) => http.post<void>(`${API_PREFIX}/session/${id}/compact`),
       events: async (id, opts) => {
         const response = await http.stream(`${API_PREFIX}/session/${id}/event`, { signal: opts?.signal })
-        const events = sseStream(response)
-        return { stream: events }
+        return { stream: sseStream(response) }
       },
-      history: (id, opts) => http.get(`${API_PREFIX}/session/${id}/history${buildQuery(opts)}`),
+      history: (id, opts) => http.get<HistoryEvent[]>(`${API_PREFIX}/session/${id}/history${buildQuery(opts)}`),
       context: (id) => http.get(`${API_PREFIX}/session/${id}/context`),
       interrupt: (id) => http.post<void>(`${API_PREFIX}/session/${id}/interrupt`),
+      active: () => http.get<Record<string, { type: string }>>(`${API_PREFIX}/session/active`),
+      status: (id) => http.get<{ type: string }>(`${API_PREFIX}/session/${id}/status`),
       stage: (id, input) => http.post<void>(`${API_PREFIX}/session/${id}/revert/stage`, input),
       clear: (id) => http.post<void>(`${API_PREFIX}/session/${id}/revert/clear`),
       commit: (id) => http.post<void>(`${API_PREFIX}/session/${id}/revert/commit`),
       delete: (id) => http.delete<void>(`${API_PREFIX}/session/${id}`),
       update: (id, input) => http.patch<void>(`${API_PREFIX}/session/${id}`, input),
-      status: () => http.get(`${API_PREFIX}/session/active`),
       todo: (id) => http.get(`${API_PREFIX}/session/${id}/todo`),
       summarize: (id, input) => http.post(`${API_PREFIX}/session/${id}/summarize`, input),
       command: (id, input) => http.post(`${API_PREFIX}/session/${id}/command`, input),
@@ -328,17 +323,18 @@ export function createRokcodeClient(options: RokcodeClientOptions): RokcodeClien
       list: () => http.get(`${API_PREFIX}/project/list`),
     },
     file: {
-      read: (path) => http.get(`${API_PREFIX}/file?path=${encodeURIComponent(path)}`),
-      list: (path) => http.get(`${API_PREFIX}/file/list?path=${encodeURIComponent(path)}`),
+      read: (input) => http.get(`${API_PREFIX}/file?path=${encodeURIComponent(input.path)}`),
+      list: (input) => http.get(`${API_PREFIX}/file/list?path=${encodeURIComponent(input.path)}`),
+      write: (input) => http.post<void>(`${API_PREFIX}/file`, input),
     },
     permission: {
       list: () => http.get(`${API_PREFIX}/permission`),
-      reply: (id, response) => http.post<void>(`${API_PREFIX}/permission/${id}`, response),
+      reply: (input) => http.post<void>(`${API_PREFIX}/permission/${input.id}`, input.response),
     },
     question: {
       list: () => http.get(`${API_PREFIX}/question`),
-      reply: (id, response) => http.post<void>(`${API_PREFIX}/question/${id}`, response),
-      reject: (id) => http.post<void>(`${API_PREFIX}/question/${id}/reject`),
+      reply: (input) => http.post<void>(`${API_PREFIX}/question/${input.id}`, input.response),
+      reject: (input) => http.post<void>(`${API_PREFIX}/question/${input.id}/reject`),
     },
     tool: {
       ids: () => http.get<string[]>(`${API_PREFIX}/tool/ids`),
@@ -357,6 +353,9 @@ export function createRokcodeClient(options: RokcodeClientOptions): RokcodeClien
     },
     lsp: {
       status: () => http.get(`${API_PREFIX}/lsp/status`),
+    },
+    path: {
+      get: () => http.get<{ home: string; [key: string]: unknown }>(`${API_PREFIX}/path`),
     },
   } satisfies RokcodeClient
 }
