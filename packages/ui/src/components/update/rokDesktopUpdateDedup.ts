@@ -1,7 +1,7 @@
 /**
  * Pure decision helpers for the OpenCode update toast and PWA install toast.
  *
- * Extracted from `OpenCodeUpdateToast.tsx` and `usePwaInstallPrompt.ts` so the
+ * Extracted from `RokDesktopUpdateToast.tsx` and `usePwaInstallPrompt.ts` so the
  * dedup decisions can be unit-tested without a DOM, storage, or React. The
  * React surfaces remain the sole owners of side effects (storage writes,
  * `toast.info`, event listeners). This module only answers the question
@@ -35,7 +35,7 @@ export const shouldShowPwaInstallToast = (input: PwaInstallToastDecisionInput): 
   return true;
 };
 
-export interface OpenCodeUpdateToastDecisionInput {
+export interface RokDesktopUpdateToastDecisionInput {
   /** Version string reported by the server (already trimmed by the caller). */
   readonly version: string;
   /** Most recent version the user explicitly dismissed, or `null` if none. */
@@ -52,8 +52,8 @@ export interface OpenCodeUpdateToastDecisionInput {
  * different `dismissedVersion` means a newer release has appeared since the
  * last dismissal and the toast surfaces again.
  */
-export const shouldShowOpenCodeUpdateToast = (
-  input: OpenCodeUpdateToastDecisionInput,
+export const shouldShowRokDesktopUpdateToast = (
+  input: RokDesktopUpdateToastDecisionInput,
 ): boolean => {
   if (!input.version) return false;
   if (input.seenVersions.has(input.version)) return false;
@@ -69,14 +69,14 @@ export const shouldShowOpenCodeUpdateToast = (
  * Only `string` is accepted; numeric or boolean payloads are rejected because
  * downstream callers compare versions by literal equality.
  */
-export const resolveOpenCodeUpdateVersion = (detail: unknown): string => {
+export const resolveRokcodeUpdateVersion = (detail: unknown): string => {
   if (detail === null || typeof detail !== 'object') return '';
   const candidate = (detail as { version?: unknown }).version;
   if (typeof candidate !== 'string') return '';
   return candidate.trim();
 };
 
-export interface OpenCodeUpgradeStatusLike {
+export interface RokcodeUpgradeStatusLike {
   readonly available?: boolean | null;
   readonly latestVersion?: string | null;
 }
@@ -86,8 +86,8 @@ export interface OpenCodeUpgradeStatusLike {
  * payload. Returns `''` when the payload is missing the field, has the wrong
  * type, or reports `available !== true`.
  */
-export const resolveOpenCodeUpgradeStatusVersion = (
-  status: OpenCodeUpgradeStatusLike | null | undefined,
+export const resolveRokcodeUpgradeStatusVersion = (
+  status: RokcodeUpgradeStatusLike | null | undefined,
 ): string => {
   if (!status) return '';
   if (status.available !== true) return '';

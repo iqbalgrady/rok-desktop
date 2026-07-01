@@ -5,7 +5,7 @@ import type { IconName } from '@/components/icon/icons';
 import { McpIcon } from '@/components/icons/McpIcon';
 import { McpDropdownContent } from '@/components/mcp/McpDropdown';
 import { AboutSettings } from '@/components/sections/rok-desktop/AboutSettings';
-import { OpenCodeUpdateToast } from '@/components/update/OpenCodeUpdateToast';
+import { RokDesktopUpdateToast } from '@/components/update/RokDesktopUpdateToast';
 import { ConfigUpdateOverlay } from '@/components/ui/ConfigUpdateOverlay';
 import { Button } from '@/components/ui/button';
 import { RokDesktopLogo } from '@/components/ui/RokDesktopLogo';
@@ -2197,7 +2197,7 @@ export function MobileApp({ apis }: MobileAppProps) {
           <TooltipProvider delayDuration={300} skipDelayDuration={150}>
             <div className="h-full bg-background text-foreground">
               <SyncAppEffects embeddedBackgroundWorkEnabled={isInitialized} />
-              <OpenCodeUpdateToast />
+              <RokDesktopUpdateToast />
               <MobileShell onActiveConnectionDeleted={() => {
                 switchRuntimeEndpoint({ apiBaseUrl: '', clientToken: null, runtimeKey: 'mobile-disconnected' });
                 setConnectionEpoch((value) => value + 1);

@@ -642,7 +642,7 @@ export interface SettingsPayload {
   queueModeEnabled?: boolean;
   gitmojiEnabled?: boolean;
   inputSpellcheckEnabled?: boolean;
-  showOpenCodeUpdateNotifications?: boolean;
+  showRokcodeUpdateNotifications?: boolean;
   openCodeUpdateToastDismissedVersion?: string;
   showToolFileIcons?: boolean;
   showTurnChangedFiles?: boolean;

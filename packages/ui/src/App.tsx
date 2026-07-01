@@ -58,7 +58,7 @@ import { applyMobileKeyboardMode } from '@/lib/mobileKeyboardMode';
 import { SyncAppEffects } from '@/apps/AppEffects';
 import { resetAppForRuntimeEndpointChange } from '@/apps/runtimeEndpointReset';
 import { useAppFontEffects } from '@/apps/useAppFontEffects';
-import { OpenCodeUpdateToast } from '@/components/update/OpenCodeUpdateToast';
+import { RokDesktopUpdateToast } from '@/components/update/RokDesktopUpdateToast';
 import { markStartupTrace, startupTraceEnabled } from '@/lib/startupTrace';
 
 // Lazy-loaded heavy views — loaded on demand to reduce initial bundle size.
@@ -197,7 +197,7 @@ const EmbeddedSessionChatContent: React.FC<{
   return (
     <>
       <SyncAppEffects embeddedBackgroundWorkEnabled={embeddedBackgroundWorkEnabled} />
-      <OpenCodeUpdateToast />
+      <RokDesktopUpdateToast />
       <ChatView readOnly={embeddedSessionChat.readOnly} />
       <Toaster />
     </>
@@ -941,7 +941,7 @@ function App({ apis }: AppProps) {
               <TooltipProvider delayDuration={300} skipDelayDuration={150}>
                 <div className={isDesktopRuntime ? 'h-full text-foreground bg-transparent' : 'h-full text-foreground bg-background'}>
                   <SyncAppEffects embeddedBackgroundWorkEnabled={embeddedBackgroundWorkEnabled} />
-                  <OpenCodeUpdateToast />
+                  <RokDesktopUpdateToast />
                   <MainLayout />
                   <Toaster />
                   {!isBootShell && (

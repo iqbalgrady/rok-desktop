@@ -126,7 +126,7 @@ export type DesktopSettings = {
   pwaOrientation?: 'system' | 'portrait' | 'landscape';
   mobileKeyboardMode?: MobileKeyboardMode;
   inputSpellcheckEnabled?: boolean;
-  showOpenCodeUpdateNotifications?: boolean;
+  showRokcodeUpdateNotifications?: boolean;
   openCodeUpdateToastDismissedVersion?: string;
   showToolFileIcons?: boolean;
   showTurnChangedFiles?: boolean;

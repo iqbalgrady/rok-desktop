@@ -8,29 +8,29 @@ import { runtimeFetch } from '@/lib/runtime-fetch';
 import { updateDesktopSettings } from '@/lib/persistence';
 import { getDeferredSafeStorage } from '@/stores/utils/safeStorage';
 import {
-  resolveOpenCodeUpdateVersion,
-  resolveOpenCodeUpgradeStatusVersion,
-  shouldShowOpenCodeUpdateToast,
-  type OpenCodeUpgradeStatusLike,
-} from './openCodeUpdateDedup';
+  resolveRokcodeUpdateVersion,
+  resolveRokcodeUpgradeStatusVersion,
+  shouldShowRokDesktopUpdateToast,
+  type RokcodeUpgradeStatusLike,
+} from './rokDesktopUpdateDedup';
 
-const UPDATE_TOAST_ID = 'opencode-update-available';
-const UPGRADE_TOAST_ID = 'opencode-upgrade-progress';
+const UPDATE_TOAST_ID = 'rokcode-update-available';
+const UPGRADE_TOAST_ID = 'rokcode-upgrade-progress';
 const INITIAL_CHECK_DELAY_MS = 5_000;
 const CHECK_RETRY_DELAYS_MS = [10_000, 60_000];
-const UPDATE_TOAST_DISMISSED_VERSION_KEY = 'opencode-update-toast-dismissed-version';
+const UPDATE_TOAST_DISMISSED_VERSION_KEY = 'rokcode-update-toast-dismissed-version';
 
-export const OpenCodeUpdateToast: React.FC = () => {
+export const RokDesktopUpdateToast: React.FC = () => {
   const { t } = useI18n();
-  const showOpenCodeUpdateNotifications = useUIStore((state) => state.showOpenCodeUpdateNotifications);
+  const showRokcodeUpdateNotifications = useUIStore((state) => state.showRokcodeUpdateNotifications);
   const seenVersionsRef = React.useRef(new Set<string>());
   const upgradingRef = React.useRef(false);
 
   React.useEffect(() => {
-    if (!showOpenCodeUpdateNotifications) {
+    if (!showRokcodeUpdateNotifications) {
       toast.dismiss(UPDATE_TOAST_ID);
     }
-  }, [showOpenCodeUpdateNotifications]);
+  }, [showRokcodeUpdateNotifications]);
 
   const reloadOpenCode = React.useCallback(() => {
     toast.dismiss(UPGRADE_TOAST_ID);
@@ -94,11 +94,11 @@ export const OpenCodeUpdateToast: React.FC = () => {
       // Upstream setting wins over our dedup logic: if user disabled
       // OpenCode update notifications, dismiss any active toast and bail
       // before consulting dedup state.
-      if (!useUIStore.getState().showOpenCodeUpdateNotifications) {
+      if (!useUIStore.getState().showRokcodeUpdateNotifications) {
         toast.dismiss(UPDATE_TOAST_ID);
         return;
       }
-      const decision = shouldShowOpenCodeUpdateToast({
+      const decision = shouldShowRokDesktopUpdateToast({
         version,
         dismissedVersion: getDeferredSafeStorage().getItem(UPDATE_TOAST_DISMISSED_VERSION_KEY),
         seenVersions: seenVersionsRef.current,
@@ -128,7 +128,7 @@ export const OpenCodeUpdateToast: React.FC = () => {
     };
 
     const onUpdateAvailable = (event: Event) => {
-      const version = resolveOpenCodeUpdateVersion((event as CustomEvent<unknown>).detail);
+      const version = resolveRokcodeUpdateVersion((event as CustomEvent<unknown>).detail);
       showUpdateAvailableToast(version);
     };
 
@@ -139,8 +139,8 @@ export const OpenCodeUpdateToast: React.FC = () => {
       try {
         const response = await runtimeFetch('/api/opencode/upgrade-status', { headers: { Accept: 'application/json' } });
         if (!response.ok) throw new Error(response.statusText || 'OpenCode upgrade status check failed');
-        const status = await response.json().catch(() => null) as OpenCodeUpgradeStatusLike | null;
-        const version = resolveOpenCodeUpgradeStatusVersion(status);
+        const status = await response.json().catch(() => null) as RokcodeUpgradeStatusLike | null;
+        const version = resolveRokcodeUpgradeStatusVersion(status);
         if (!cancelled && version) {
           showUpdateAvailableToast(version);
         }
@@ -152,7 +152,7 @@ export const OpenCodeUpdateToast: React.FC = () => {
       }
     };
 
-    if (showOpenCodeUpdateNotifications) {
+    if (showRokcodeUpdateNotifications) {
       timeoutIds.push(setTimeout(() => { void checkForUpdate(0); }, INITIAL_CHECK_DELAY_MS));
     }
 
@@ -162,7 +162,7 @@ export const OpenCodeUpdateToast: React.FC = () => {
       for (const timeoutId of timeoutIds) clearTimeout(timeoutId);
       window.removeEventListener('rok-desktop:opencode-update-available', onUpdateAvailable);
     };
-  }, [runUpgrade, showOpenCodeUpdateNotifications, t]);
+  }, [runUpgrade, showRokcodeUpdateNotifications, t]);
 
   return null;
 };

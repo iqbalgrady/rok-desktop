@@ -16,8 +16,8 @@ export const OpenCodeCliSettings: React.FC = () => {
   const [value, setValue] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(true);
   const [isSaving, setIsSaving] = React.useState(false);
-  const showOpenCodeUpdateNotifications = useUIStore((state) => state.showOpenCodeUpdateNotifications);
-  const setShowOpenCodeUpdateNotifications = useUIStore((state) => state.setShowOpenCodeUpdateNotifications);
+  const showRokcodeUpdateNotifications = useUIStore((state) => state.showRokcodeUpdateNotifications);
+  const setShowRokcodeUpdateNotifications = useUIStore((state) => state.setShowRokcodeUpdateNotifications);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -83,9 +83,9 @@ export const OpenCodeCliSettings: React.FC = () => {
   }, [t, value]);
 
   const handleShowUpdateNotificationsChange = React.useCallback((enabled: boolean) => {
-    setShowOpenCodeUpdateNotifications(enabled);
-    void updateDesktopSettings({ showOpenCodeUpdateNotifications: enabled });
-  }, [setShowOpenCodeUpdateNotifications]);
+    setShowRokcodeUpdateNotifications(enabled);
+    void updateDesktopSettings({ showRokcodeUpdateNotifications: enabled });
+  }, [setShowRokcodeUpdateNotifications]);
 
   return (
     <div className="mb-8">
@@ -149,9 +149,9 @@ export const OpenCodeCliSettings: React.FC = () => {
           </div>
         </div>
 
-        <label data-settings-item="sessions.opencode-update-notifications" className="flex cursor-pointer items-center gap-2 py-1.5">
+        <label data-settings-item="sessions.rokcode-update-notifications" className="flex cursor-pointer items-center gap-2 py-1.5">
           <Checkbox
-            checked={showOpenCodeUpdateNotifications}
+            checked={showRokcodeUpdateNotifications}
             onChange={handleShowUpdateNotificationsChange}
             ariaLabel={t('settings.rok-desktop.opencodeCli.field.showUpdateNotificationsAria')}
           />

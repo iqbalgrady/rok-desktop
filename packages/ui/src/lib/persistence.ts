@@ -108,9 +108,9 @@ const persistToLocalStorage = (settings: DesktopSettings) => {
   if (typeof settings.openCodeUpdateToastDismissedVersion === 'string') {
     const version = settings.openCodeUpdateToastDismissedVersion.trim();
     if (version) {
-      localStorage.setItem('opencode-update-toast-dismissed-version', version);
+      localStorage.setItem('rokcode-update-toast-dismissed-version', version);
     } else {
-      localStorage.removeItem('opencode-update-toast-dismissed-version');
+      localStorage.removeItem('rokcode-update-toast-dismissed-version');
     }
   }
   if (settings.sttProvider === 'browser' || settings.sttProvider === 'server') {
@@ -496,10 +496,10 @@ const applyDesktopUiPreferences = (settings: DesktopSettings) => {
     store.setInputSpellcheckEnabled(settings.inputSpellcheckEnabled);
   }
   if (
-    typeof settings.showOpenCodeUpdateNotifications === 'boolean'
-    && settings.showOpenCodeUpdateNotifications !== store.showOpenCodeUpdateNotifications
+    typeof settings.showRokcodeUpdateNotifications === 'boolean'
+    && settings.showRokcodeUpdateNotifications !== store.showRokcodeUpdateNotifications
   ) {
-    store.setShowOpenCodeUpdateNotifications(settings.showOpenCodeUpdateNotifications);
+    store.setShowRokcodeUpdateNotifications(settings.showRokcodeUpdateNotifications);
   }
   if (typeof settings.showToolFileIcons === 'boolean' && settings.showToolFileIcons !== store.showToolFileIcons) {
     store.setShowToolFileIcons(settings.showToolFileIcons);
@@ -1023,8 +1023,8 @@ const sanitizeWebSettings = (payload: unknown): DesktopSettings | null => {
   if (typeof candidate.inputSpellcheckEnabled === 'boolean') {
     result.inputSpellcheckEnabled = candidate.inputSpellcheckEnabled;
   }
-  if (typeof candidate.showOpenCodeUpdateNotifications === 'boolean') {
-    result.showOpenCodeUpdateNotifications = candidate.showOpenCodeUpdateNotifications;
+  if (typeof candidate.showRokcodeUpdateNotifications === 'boolean') {
+    result.showRokcodeUpdateNotifications = candidate.showRokcodeUpdateNotifications;
   }
   if (typeof candidate.openCodeUpdateToastDismissedVersion === 'string') {
     result.openCodeUpdateToastDismissedVersion = candidate.openCodeUpdateToastDismissedVersion.trim().slice(0, 128);

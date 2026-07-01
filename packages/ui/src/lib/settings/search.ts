@@ -311,10 +311,10 @@ const SETTINGS_SEARCH_ITEMS: readonly SettingsSearchItem[] = [
     isAvailable: (ctx) => !ctx.isVSCode,
   },
   {
-    id: 'sessions.opencode-update-notifications',
+    id: 'sessions.rokcode-update-notifications',
     page: 'sessions',
     titleKey: 'settings.rok-desktop.opencodeCli.field.showUpdateNotifications',
-    keywords: ['opencode', 'cli', 'updates'],
+    keywords: ['rokcode', 'cli', 'updates'],
     isAvailable: (ctx) => !ctx.isVSCode,
   },
   {
