@@ -657,7 +657,7 @@ export const registerOpenCodeProxy = (app, deps) => {
   app.get('/api/global/event', forwardSseRequest);
   app.get('/api/event', forwardSseRequest);
 
-  app.get('/api/experimental/session', (req, res, next) => {
+  app.get('/api/session', (req, res, next) => {
     return forwardSanitizedSessionListRequest(req, res, next, 'experimental.session');
   });
 
