@@ -32,21 +32,21 @@ export const createDirectoryQueryCanonicalizer = ({ realpath, ...cacheOptions } 
 };
 
 export const normalizeForwardedDirectoryHeaders = (headers) => {
-  const rawDirectory = headers?.['x-opencode-directory'];
+  const rawDirectory = headers?.['x-rokcode-directory'];
   if (typeof rawDirectory !== 'string') {
     return headers;
   }
 
-  if (headers['x-opencode-directory-encoding'] !== 'uri') {
+  if (headers['x-rokcode-directory-encoding'] !== 'uri') {
     return headers;
   }
 
   try {
-    headers['x-opencode-directory'] = decodeURIComponent(rawDirectory);
+    headers['x-rokcode-directory'] = decodeURIComponent(rawDirectory);
   } catch {
     // Leave malformed values untouched; upstream will reject invalid paths.
   }
-  delete headers['x-opencode-directory-encoding'];
+  delete headers['x-rokcode-directory-encoding'];
   return headers;
 };
 
@@ -675,16 +675,16 @@ export const registerOpenCodeProxy = (app, deps) => {
           proxyReq.setHeader('Authorization', authHeaders.Authorization);
         }
 
-        if (req.headers?.['x-opencode-directory-encoding'] === 'uri') {
-          const rawDirectory = req.headers['x-opencode-directory'];
+        if (req.headers?.['x-rokcode-directory-encoding'] === 'uri') {
+          const rawDirectory = req.headers['x-rokcode-directory'];
           if (typeof rawDirectory === 'string') {
             try {
-              proxyReq.setHeader('x-opencode-directory', decodeURIComponent(rawDirectory));
+              proxyReq.setHeader('x-rokcode-directory', decodeURIComponent(rawDirectory));
             } catch {
-              proxyReq.setHeader('x-opencode-directory', rawDirectory);
+              proxyReq.setHeader('x-rokcode-directory', rawDirectory);
             }
           }
-          proxyReq.removeHeader?.('x-opencode-directory-encoding');
+          proxyReq.removeHeader?.('x-rokcode-directory-encoding');
         }
 
         // Defensive: request identity encoding from upstream OpenCode.
