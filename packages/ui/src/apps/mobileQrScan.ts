@@ -1,6 +1,6 @@
 // Connection payload parsing + native QR scanning for the dedicated mobile app.
 //
-// The pairing link format is produced by `openchamber connect-url --qr`:
+// The pairing link format is produced by `rok-desktop connect-url --qr`:
 //   rok-desktop://connect?v=1&server=<url>&token=<token>&label=<label>
 // We also accept a bare http(s) URL so a QR encoding only the server address works.
 //

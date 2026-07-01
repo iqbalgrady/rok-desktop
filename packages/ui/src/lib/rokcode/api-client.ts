@@ -1,14 +1,11 @@
-// Rokcode API client adapter — replaces @opencode-ai/sdk/v2
+// Rokcode API client adapter — self-contained, no external SDK dependency
 // Provides the same interface as OpencodeClient for seamless UI integration.
 
 import { runtimeFetch } from "@/lib/runtime-fetch"
 import { getRuntimeUrlResolver } from "@/lib/runtime-url"
-import type { Session } from "@opencode-ai/sdk/v2"
+import type { Session } from "./types"
 
 export { runtimeFetch }
-
-// Re-export Session type from SDK for client code that imports from here
-export type { Session } from "@opencode-ai/sdk/v2"
 
 const API_PREFIX = "/api"
 

@@ -592,7 +592,7 @@ export const createOpenCodeEnvRuntime = (deps) => {
       return null;
     }
 
-    const packageShim = path.join(nodeModulesDir, 'opencode-ai', 'bin', 'opencode.exe');
+    const packageShim = path.join(nodeModulesDir, 'rokcode', 'bin', 'rokcode.exe');
     if (isExecutable(packageShim)) {
       return packageShim;
     }
@@ -600,7 +600,7 @@ export const createOpenCodeEnvRuntime = (deps) => {
     for (const packageName of getWindowsNativeOpencodePackageNames()) {
       const candidates = [
         path.join(nodeModulesDir, packageName, 'bin', 'opencode.exe'),
-        path.join(nodeModulesDir, 'opencode-ai', 'node_modules', packageName, 'bin', 'opencode.exe'),
+        path.join(nodeModulesDir, 'rokcode', 'node_modules', packageName, 'bin', 'opencode.exe'),
       ];
       for (const candidate of candidates) {
         if (isExecutable(candidate)) {
@@ -617,7 +617,7 @@ export const createOpenCodeEnvRuntime = (deps) => {
       return null;
     }
 
-    const launcher = path.join(nodeModulesDir, 'opencode-ai', 'bin', 'opencode');
+    const launcher = path.join(nodeModulesDir, 'rokcode', 'bin', 'opencode');
     if (!isExecutable(launcher) && !fs.existsSync(launcher)) {
       return null;
     }
@@ -637,7 +637,7 @@ export const createOpenCodeEnvRuntime = (deps) => {
 
     try {
       const content = fs.readFileSync(wrapperPath, 'utf8');
-      const launcherMatch = content.match(/node_modules[\\/]+opencode-ai[\\/]+bin[\\/]+opencode/i);
+      const launcherMatch = content.match(/node_modules[\\/]+rokcode[\\/]+bin[\\/]+opencode/i);
       if (!launcherMatch) {
         return null;
       }
@@ -679,7 +679,7 @@ export const createOpenCodeEnvRuntime = (deps) => {
       pushCandidate(path.dirname(fileDir));
     }
 
-    if (lower.endsWith(`${path.sep}node_modules${path.sep}opencode-ai${path.sep}bin${path.sep}opencode`)) {
+    if (lower.endsWith(`${path.sep}node_modules${path.sep}rokcode${path.sep}bin${path.sep}opencode`)) {
       pushCandidate(path.dirname(path.dirname(fileDir)));
     }
 

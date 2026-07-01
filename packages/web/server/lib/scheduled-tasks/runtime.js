@@ -1,4 +1,3 @@
-import { createOpencodeClient } from '@opencode-ai/sdk/v2';
 import { DateTime } from 'luxon';
 import parser from 'cron-parser';
 import { expandSnippets } from '../opencode/snippets.js';
@@ -486,10 +485,21 @@ export const createScheduledTasksRuntime = (deps) => {
 
     const baseUrl = buildOpenCodeUrl('/', '').replace(/\/$/, '');
     const authHeaders = getOpenCodeAuthHeaders();
-    const client = createOpencodeClient({
-      baseUrl,
-      headers: authHeaders,
+    const createClient = () => ({
+      session: {
+        create: (input) => fetch(`${baseUrl}/api/session`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(authHeaders || {}) },
+          body: JSON.stringify(input),
+        }).then(r => r.json()),
+        command: (input) => fetch(`${baseUrl}/api/session/${input.sessionID}/command`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(authHeaders || {}) },
+          body: JSON.stringify(input),
+        }).then(r => r.json()),
+      },
     });
+    const client = createClient();
 
     const sessionResponse = await client.session.create({
       directory: projectPath,

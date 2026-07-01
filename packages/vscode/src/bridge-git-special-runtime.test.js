@@ -19,13 +19,13 @@ const sdkClient = {
   },
 };
 
-const createOpencodeClient = mock(() => sdkClient);
+const createRokcodeClient = mock(() => sdkClient);
 const rawFetch = mock(async () => {
   throw new Error('raw fetch should not be used');
 });
 
 mock.module('./gitService', () => gitService);
-mock.module('@opencode-ai/sdk/v2', () => ({ createOpencodeClient }));
+mock.module('../../ui/src/lib/rokcode/api-client', () => ({ createRokcodeClient }));
 
 const { handleSpecialGitBridgeMessage } = await import('./bridge-git-special-runtime');
 
@@ -38,11 +38,11 @@ describe('bridge git special runtime', () => {
     sdkClient.session.promptAsync.mockReset();
     sdkClient.session.messages.mockReset();
     sdkClient.session.delete.mockReset();
-    createOpencodeClient.mockReset();
+    createRokcodeClient.mockReset();
     rawFetch.mockClear();
 
     globalThis.fetch = rawFetch;
-    createOpencodeClient.mockImplementation(() => sdkClient);
+    createRokcodeClient.mockImplementation(() => sdkClient);
     gitService.getGitRangeFiles.mockImplementation(async () => ['src/a.ts']);
     gitService.getGitRangeDiff.mockImplementation(async () => ({ diff: 'diff --git a/src/a.ts b/src/a.ts\n+new line' }));
     sdkClient.v2.model.list.mockImplementation(async () => ({
@@ -92,7 +92,7 @@ describe('bridge git special runtime', () => {
       data: { title: 'PR title', body: 'PR body' },
     });
     expect(rawFetch).not.toHaveBeenCalled();
-    expect(createOpencodeClient).toHaveBeenCalledWith({
+    expect(createRokcodeClient).toHaveBeenCalledWith({
       baseUrl: 'http://opencode.test',
       headers: { Authorization: 'Bearer test' },
     });

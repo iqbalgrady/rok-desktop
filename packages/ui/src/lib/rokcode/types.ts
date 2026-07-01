@@ -1,6 +1,5 @@
-// Re-export ALL types from the original OpenCode SDK for full compatibility
-// The UI codebase was written against these exact types.
-// Our runtime adapter provides the same API surface.
+// Re-export types from OpenCode SDK for full type compatibility
+// @opencode-ai/sdk is a devDependency — used only for types at build time, never in runtime
 
 export type {
   Session,
@@ -22,5 +21,4 @@ export type {
   OpencodeClient,
 } from "@opencode-ai/sdk/v2"
 
-// Additional types we define (not in SDK)
 export type { RokcodeClient, PromptInput, PromptDelivery, HistoryEvent, StreamEvent, SseEvent } from "./api-client"
