@@ -75,7 +75,7 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(packageJson.version),
   },
   optimizeDeps: {
-    include: ['@/lib/rokcode/types', '@opencode-ai/sdk/v2'],
+    include: [],
   },
   server: {
     port: 5173,
