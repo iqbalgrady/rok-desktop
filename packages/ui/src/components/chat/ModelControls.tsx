@@ -1299,7 +1299,7 @@ export const ModelControls: React.FC<ModelControlsProps> = ({
     };
 
     const capitalizeAgentName = (name: string) => {
-        return name.charAt(0).toUpperCase() + name.slice(1);
+        if (!name) return ""; return name.charAt(0).toUpperCase() + name.slice(1);
     };
 
     const toggleMobileProviderExpansion = React.useCallback((providerId: string) => {

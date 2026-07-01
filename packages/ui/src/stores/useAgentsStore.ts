@@ -137,8 +137,8 @@ export type AgentWithExtras = Agent & {
 };
 
 /** Parse the subfolder group name from an agent file path.
- *  e.g. "~/.config/opencode/agents/business/ceo.md" → "business"
- *  e.g. "~/.config/opencode/agents/ceo.md"          → undefined
+ *  e.g. "~/.config/rokcode/agents/business/ceo.md" → "business"
+ *  e.g. "~/.config/rokcode/agents/ceo.md"          → undefined
  */
 function parseAgentGroup(path: string | null | undefined): string | undefined {
   if (!path) return undefined;
@@ -272,7 +272,7 @@ export const useAgentsStore = create<AgentsStore>()(
                       const response = await runtimeFetch(`/api/config/agents/${encodeURIComponent(agent.name)}${queryParams}`, {
                         headers: {
                           'Cache-Control': 'no-cache',
-                          ...(configDirectory ? { 'x-opencode-directory': configDirectory } : {}),
+                          ...(configDirectory ? { 'x-rokcode-directory': configDirectory } : {}),
                         }
                       });
 
@@ -363,7 +363,7 @@ export const useAgentsStore = create<AgentsStore>()(
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                ...(configDirectory ? { 'x-opencode-directory': configDirectory } : {}),
+                ...(configDirectory ? { 'x-rokcode-directory': configDirectory } : {}),
               },
               body: JSON.stringify(agentConfig)
             });
@@ -434,7 +434,7 @@ export const useAgentsStore = create<AgentsStore>()(
               method: 'PATCH',
               headers: {
                 'Content-Type': 'application/json',
-                ...(configDirectory ? { 'x-opencode-directory': configDirectory } : {}),
+                ...(configDirectory ? { 'x-rokcode-directory': configDirectory } : {}),
               },
               body: JSON.stringify(agentConfig)
             });
@@ -493,7 +493,7 @@ export const useAgentsStore = create<AgentsStore>()(
               method: 'DELETE',
               headers: {
                 'Content-Type': 'application/json',
-                ...(configDirectory ? { 'x-opencode-directory': configDirectory } : {}),
+                ...(configDirectory ? { 'x-rokcode-directory': configDirectory } : {}),
               },
               body: JSON.stringify({ scope }),
             });
