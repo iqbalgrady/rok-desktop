@@ -10,7 +10,7 @@ import { GitHubSettings } from './GitHubSettings';
 import { VoiceSettings } from './VoiceSettings';
 import { TunnelSettings } from './TunnelSettings';
 import { RokcodeSettings } from './RokcodeSettings';
-import { OpenCodeCliSettings } from './OpenCodeCliSettings';
+import { OpenCodeCliSettings } from './RokcodeCliSettings';
 import { DesktopNetworkSettings } from './DesktopNetworkSettings';
 import { KeyboardShortcutsSettings } from './KeyboardShortcutsSettings';
 import { ScrollableOverlay } from '@/components/ui/ScrollableOverlay';
