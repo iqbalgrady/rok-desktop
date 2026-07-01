@@ -308,6 +308,20 @@ function App({ apis }: AppProps) {
     return () => registerRuntimeAPIs(null);
   }, [apis]);
 
+  // Auto-refresh session list when switching back to this tab
+  // Ensures sessions created in terminal/TUI appear seamlessly
+  React.useEffect(() => {
+    const onVisible = () => {
+      if (!document.hidden) {
+        import('@/stores/useGlobalSessionsStore').then((m) => {
+          m.refreshGlobalSessions().catch(() => {});
+        });
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, []);
+
   React.useEffect(() => {
     if (embeddedSessionChat) {
       return;
