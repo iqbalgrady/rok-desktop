@@ -95,46 +95,60 @@ export interface StreamEvent { type: string; properties?: Record<string, unknown
 export interface SseEvent { id?: string; type: string; data: Record<string, unknown> }
 
 // --- Client interface — all methods return SdkResult<T> ---
+// Session methods accept old-SDK object format { sessionID, directory, ... }
 export interface RokcodeClient {
   session: {
     list(input?: { workspace?: string; limit?: number; directory?: string; cursor?: string }): Promise<SdkResult<Session[]>>
     create(input: SessionCreateInput): Promise<SdkResult<Session>>
-    get(id: string): Promise<SdkResult<Session>>
-    prompt(id: string, input: PromptInput): Promise<SdkResult<PromptDelivery>>
-    abort(id: string): Promise<SdkResult<void>>
-    fork(id: string, input?: { messageID?: string }): Promise<SdkResult<Session>>
-    compact(id: string): Promise<SdkResult<void>>
-    events(id: string, opts?: { signal?: AbortSignal }): Promise<SdkResult<{ stream: AsyncIterable<SseEvent> }>>
-    history(id: string, opts?: { limit?: number; after?: string }): Promise<SdkResult<HistoryEvent[]>>
-    context(id: string): Promise<SdkResult<unknown>>
-    interrupt(id: string): Promise<SdkResult<void>>
+    get(input: { sessionID: string; directory?: string }): Promise<SdkResult<Session>>
+    prompt(input: PromptInput & { sessionID: string; directory?: string }): Promise<SdkResult<PromptDelivery>>
+    promptAsync(input: PromptInput & { sessionID: string; directory?: string }): Promise<SdkResult<PromptDelivery>>
+    abort(input: { sessionID: string; directory?: string }): Promise<SdkResult<void>>
+    fork(input: { sessionID: string; messageID?: string; directory?: string }): Promise<SdkResult<Session>>
+    compact(input: { sessionID: string; directory?: string }): Promise<SdkResult<void>>
+    events(input: { sessionID: string; directory?: string }, opts?: { signal?: AbortSignal }): Promise<SdkResult<{ stream: AsyncIterable<SseEvent> }>>
+    history(input: { sessionID: string; directory?: string; limit?: number; after?: string }): Promise<SdkResult<HistoryEvent[]>>
+    context(input: { sessionID: string; directory?: string }): Promise<SdkResult<unknown>>
+    interrupt(input: { sessionID: string; directory?: string }): Promise<SdkResult<void>>
     active(): Promise<SdkResult<Record<string, { type: string }>>>
-    delete(id: string): Promise<SdkResult<void>>
-    update(id: string, input: Record<string, unknown>): Promise<SdkResult<void>>
-    stage(id: string, input: { messageID: string; files?: unknown[] }): Promise<SdkResult<void>>
-    clear(id: string): Promise<SdkResult<void>>
-    commit(id: string): Promise<SdkResult<void>>
-    status(id: string): Promise<SdkResult<{ type: string }>>
-    todo(id: string): Promise<SdkResult<unknown>>
-    summarize(id: string, input?: unknown): Promise<SdkResult<unknown>>
-    command(id: string, input: unknown): Promise<SdkResult<unknown>>
-    shell(id: string, input: unknown): Promise<SdkResult<unknown>>
-    revert(id: string, input: unknown): Promise<SdkResult<unknown>>
-    unrevert(id: string): Promise<SdkResult<void>>
-    messages(id: string, opts?: unknown): Promise<SdkResult<unknown>>
-    message(id: string, messageID: string): Promise<SdkResult<unknown>>
-    switchAgent(id: string, agent: string): Promise<SdkResult<void>>
-    switchModel(id: string, model: string): Promise<SdkResult<void>>
+    delete(input: { sessionID: string; directory?: string }): Promise<SdkResult<void>>
+    update(input: { sessionID: string; directory?: string } & Record<string, unknown>): Promise<SdkResult<void>>
+    stage(input: { sessionID: string; directory?: string; messageID: string; files?: unknown[] }): Promise<SdkResult<void>>
+    clear(input: { sessionID: string; directory?: string }): Promise<SdkResult<void>>
+    commit(input: { sessionID: string; directory?: string }): Promise<SdkResult<void>>
+    status(input: { sessionID: string; directory?: string }): Promise<SdkResult<{ type: string }>>
+    todo(input: { sessionID: string; directory?: string }): Promise<SdkResult<unknown>>
+    summarize(input: { sessionID: string; directory?: string; providerID: string; modelID: string; auto?: boolean }): Promise<SdkResult<unknown>>
+    command(input: { sessionID: string; directory?: string } & Record<string, unknown>): Promise<SdkResult<unknown>>
+    shell(input: { sessionID: string; directory?: string } & Record<string, unknown>): Promise<SdkResult<unknown>>
+    revert(input: { sessionID: string; directory?: string; messageID: string; partID?: string }): Promise<SdkResult<unknown>>
+    unrevert(input: { sessionID: string; directory?: string }): Promise<SdkResult<void>>
+    messages(input: { sessionID: string; directory?: string; limit?: number; before?: string }): Promise<SdkResult<unknown>>
+    message(input: { sessionID: string; directory?: string; messageID: string }): Promise<SdkResult<unknown>>
+    share(input: { sessionID: string; directory?: string }): Promise<SdkResult<unknown>>
+    unshare(input: { sessionID: string; directory?: string }): Promise<SdkResult<unknown>>
+    switchAgent(input: { sessionID: string; directory?: string; agent: string }): Promise<SdkResult<void>>
+    switchModel(input: { sessionID: string; directory?: string; model: string }): Promise<SdkResult<void>>
   }
   global: {
     event(opts?: { signal?: AbortSignal }): Promise<SdkResult<{ stream: AsyncIterable<SseEvent> }>>
     config: { get(): Promise<SdkResult<unknown>> }
+  }
+  provider: {
+    auth(input?: { sessionID?: string }): Promise<SdkResult<unknown>>
+    list(): Promise<SdkResult<unknown>>
+    disconnect(input: { providerID: string; sessionID?: string }): Promise<SdkResult<unknown>>
+    oauth: { authorize(input: { providerID: string; sessionID?: string }): Promise<SdkResult<unknown>>; callback(input: { providerID: string; sessionID?: string; code: string }): Promise<SdkResult<unknown>> }
+    sources(): Promise<SdkResult<unknown>>
   }
   config: {
     get(): Promise<SdkResult<unknown>>
     update(input: unknown): Promise<SdkResult<void>>
     providers(input?: Record<string, unknown>): Promise<SdkResult<unknown>>
     reload(): Promise<SdkResult<void>>
+  }
+  auth: {
+    set(input: { password: string; trustDevice?: boolean; issueClientToken?: boolean; clientLabel?: string; clientKind?: string; dedupeKey?: string }): Promise<SdkResult<unknown>>
   }
   project: {
     current(): Promise<SdkResult<{ worktree?: string; sandboxes?: unknown[]; directory?: string; [key: string]: unknown }>>
@@ -190,6 +204,20 @@ async function* sseStream(response: Response): AsyncIterable<SseEvent> {
   } finally { reader.releaseLock() }
 }
 
+// Helper: extract sessionID from old-SDK input object, falling back to direct string ID
+function sid(input?: unknown): string {
+  if (!input) return ""
+  if (typeof input === "string") return input
+  if (typeof input === "object" && input !== null) {
+    const obj = input as Record<string, unknown>
+    if (typeof obj.sessionID === "string") return obj.sessionID
+    if (typeof obj.id === "string") return obj.id
+  }
+  return String(input)
+}
+
+// Helper: extract directory from input object (if present) and return query string for it
+
 // --- Client factory ---
 export function createRokcodeClient(options: RokcodeClientOptions): RokcodeClient {
   const http = new RokcodeHttpClient(options)
@@ -197,42 +225,58 @@ export function createRokcodeClient(options: RokcodeClientOptions): RokcodeClien
     session: {
       list: (input) => http.get<Session[]>(`${API_PREFIX}/session${buildQuery(input)}`),
       create: (input) => http.post<Session>(`${API_PREFIX}/session`, input),
-      get: (id) => http.get<Session>(`${API_PREFIX}/session/${id}`),
-      prompt: (id, input) => http.post<PromptDelivery>(`${API_PREFIX}/session/${id}/prompt`, input),
-      abort: (id) => http.post<void>(`${API_PREFIX}/session/${id}/interrupt`),
-      fork: (id, input) => http.post<Session>(`${API_PREFIX}/session/${id}/fork`, input),
-      compact: (id) => http.post<void>(`${API_PREFIX}/session/${id}/compact`),
-      events: async (id, opts) => { const r = await http.stream(`${API_PREFIX}/session/${id}/event`, { signal: opts?.signal }); return { data: { stream: sseStream(r) }, response: { status: r.status } } },
-      history: (id, opts) => http.get<HistoryEvent[]>(`${API_PREFIX}/session/${id}/history${buildQuery(opts)}`),
-      context: (id) => http.get(`${API_PREFIX}/session/${id}/context`),
-      interrupt: (id) => http.post<void>(`${API_PREFIX}/session/${id}/interrupt`),
+      get: (input) => http.get<Session>(`${API_PREFIX}/session/${sid(input)}${buildQuery(input)}`),
+      prompt: (input) => http.post<PromptDelivery>(`${API_PREFIX}/session/${sid(input)}/prompt${buildQuery(input)}`, input),
+      promptAsync: (input) => http.post<PromptDelivery>(`${API_PREFIX}/session/${sid(input)}/prompt_async${buildQuery(input)}`, input),
+      abort: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/interrupt${buildQuery(input)}`),
+      fork: (input) => http.post<Session>(`${API_PREFIX}/session/${sid(input)}/fork${buildQuery(input)}`, input),
+      compact: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/compact${buildQuery(input)}`),
+      events: async (input, opts) => { const r = await http.stream(`${API_PREFIX}/session/${sid(input)}/event${buildQuery(input)}`, { signal: opts?.signal }); return { data: { stream: sseStream(r) }, response: { status: r.status } } },
+      history: (input) => http.get<HistoryEvent[]>(`${API_PREFIX}/session/${sid(input)}/history${buildQuery(input)}`),
+      context: (input) => http.get(`${API_PREFIX}/session/${sid(input)}/context${buildQuery(input)}`),
+      interrupt: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/interrupt${buildQuery(input)}`),
       active: () => http.get<Record<string, { type: string }>>(`${API_PREFIX}/session/active`),
-      status: (id) => http.get<{ type: string }>(`${API_PREFIX}/session/${id}/status`),
-      stage: (id, input) => http.post<void>(`${API_PREFIX}/session/${id}/revert/stage`, input),
-      clear: (id) => http.post<void>(`${API_PREFIX}/session/${id}/revert/clear`),
-      commit: (id) => http.post<void>(`${API_PREFIX}/session/${id}/revert/commit`),
-      delete: (id) => http.delete<void>(`${API_PREFIX}/session/${id}`),
-      update: (id, input) => http.patch<void>(`${API_PREFIX}/session/${id}`, input),
-      todo: (id) => http.get(`${API_PREFIX}/session/${id}/todo`),
-      summarize: (id, input) => http.post(`${API_PREFIX}/session/${id}/summarize`, input),
-      command: (id, input) => http.post(`${API_PREFIX}/session/${id}/command`, input),
-      shell: (id, input) => http.post(`${API_PREFIX}/session/${id}/shell`, input),
-      revert: (id, input) => http.post(`${API_PREFIX}/session/${id}/revert`, input),
-      unrevert: (id) => http.post<void>(`${API_PREFIX}/session/${id}/unrevert`),
-      messages: (id, opts) => http.get(`${API_PREFIX}/session/${id}/message${buildQuery(opts)}`),
-      message: (id, msgID) => http.get(`${API_PREFIX}/session/${id}/message/${msgID}`),
-      switchAgent: (id, agent) => http.post<void>(`${API_PREFIX}/session/${id}/agent`, { agent }),
-      switchModel: (id, model) => http.post<void>(`${API_PREFIX}/session/${id}/model`, { model }),
+      status: (input) => http.get<{ type: string }>(`${API_PREFIX}/session/${sid(input)}/status${buildQuery(input)}`),
+      stage: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/revert/stage${buildQuery(input)}`, input),
+      clear: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/revert/clear${buildQuery(input)}`),
+      commit: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/revert/commit${buildQuery(input)}`),
+      delete: (input) => http.delete<void>(`${API_PREFIX}/session/${sid(input)}${buildQuery(input)}`),
+      update: (input) => http.patch<void>(`${API_PREFIX}/session/${sid(input)}${buildQuery(input)}`, input),
+      todo: (input) => http.get(`${API_PREFIX}/session/${sid(input)}/todo${buildQuery(input)}`),
+      summarize: (input) => http.post(`${API_PREFIX}/session/${sid(input)}/summarize${buildQuery(input)}`, input),
+      command: (input) => http.post(`${API_PREFIX}/session/${sid(input)}/command${buildQuery(input)}`, input),
+      shell: (input) => http.post(`${API_PREFIX}/session/${sid(input)}/shell${buildQuery(input)}`, input),
+      revert: (input) => http.post(`${API_PREFIX}/session/${sid(input)}/revert${buildQuery(input)}`, input),
+      unrevert: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/unrevert${buildQuery(input)}`),
+      messages: (input) => http.get(`${API_PREFIX}/session/${sid(input)}/message${buildQuery(input)}`),
+      message: (input) => http.get(`${API_PREFIX}/session/${sid(input)}/message/${(input as any)?.messageID || ""}${buildQuery(input)}`),
+      share: (input) => http.post(`${API_PREFIX}/session/${sid(input)}/share${buildQuery(input)}`),
+      unshare: (input) => http.post(`${API_PREFIX}/session/${sid(input)}/unshare${buildQuery(input)}`),
+      switchAgent: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/agent${buildQuery(input)}`, { agent: (input as any)?.agent }),
+      switchModel: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/model${buildQuery(input)}`, { model: (input as any)?.model }),
     },
     global: {
       event: async (opts) => { const r = await http.stream(`${API_PREFIX}/event`, { signal: opts?.signal }); return { data: { stream: sseStream(r) }, response: { status: r.status } } },
       config: { get: () => http.get(`${API_PREFIX}/global/config`) },
+    },
+    provider: {
+      auth: (input?) => http.get(`${API_PREFIX}/provider/auth${buildQuery(input)}`),
+      list: () => http.get(`${API_PREFIX}/provider/list`),
+      disconnect: (input) => http.post(`${API_PREFIX}/provider/${(input as any)?.providerID}/auth${buildQuery({ sessionID: (input as any)?.sessionID })}`),
+      oauth: {
+        authorize: (input) => http.post(`${API_PREFIX}/provider/oauth/authorize`, input),
+        callback: (input) => http.post(`${API_PREFIX}/provider/oauth/callback`, input),
+      },
+      sources: () => http.get(`${API_PREFIX}/provider/sources`),
     },
     config: {
       get: () => http.get(`${API_PREFIX}/config`),
       update: (input) => http.patch(`${API_PREFIX}/config`, input),
       providers: (input?) => http.get(`${API_PREFIX}/config/providers${buildQuery(input)}`),
       reload: () => http.post<void>(`${API_PREFIX}/config/reload`),
+    },
+    auth: {
+      set: (input) => http.post(`/auth/session`, input),
     },
     project: {
       current: () => http.get(`${API_PREFIX}/project/current`),
@@ -265,7 +309,8 @@ export function createRokcodeClient(options: RokcodeClientOptions): RokcodeClien
 
 function buildQuery(params?: Record<string, unknown>): string {
   if (!params) return ""
-  const entries = Object.entries(params).filter(([, v]) => v !== undefined && v !== null)
+  const EXCLUDE_QUERY = new Set(["sessionID", "id"])
+  const entries = Object.entries(params).filter(([k, v]) => !EXCLUDE_QUERY.has(k) && v !== undefined && v !== null && v !== "" && typeof v !== "object")
   if (entries.length === 0) return ""
   const search = new URLSearchParams()
   for (const [k, v] of entries) search.set(k, String(v))
