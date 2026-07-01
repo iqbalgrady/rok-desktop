@@ -321,9 +321,11 @@ const normalizePath = (value?: string | null): string | null => {
 const resolveDirectoryKey = (session: Session): string | null => {
   const sessionRecord = session as Session & {
     directory?: string | null
+    location?: { directory?: string | null; [key: string]: unknown } | null
     project?: { worktree?: string | null } | null
   }
   return normalizePath(sessionRecord.directory ?? null)
+    ?? normalizePath(sessionRecord.location?.directory ?? null)
     ?? normalizePath(sessionRecord.project?.worktree ?? null)
 }
 

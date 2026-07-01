@@ -657,10 +657,6 @@ export const registerOpenCodeProxy = (app, deps) => {
   app.get('/api/global/event', forwardSseRequest);
   app.get('/api/event', forwardSseRequest);
 
-  app.get('/api/session', (req, res, next) => {
-    return forwardSanitizedSessionListRequest(req, res, next, 'experimental.session');
-  });
-
   // Generic proxy for non-SSE OpenCode API routes.
   const apiProxy = createProxyMiddleware({
     target: resolveProxyTarget(),

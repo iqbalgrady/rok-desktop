@@ -161,6 +161,7 @@ export interface RokcodeClient {
   app: { agents(): Promise<SdkResult<unknown>> }
   lsp: { status(): Promise<SdkResult<unknown>> }
   path: { get(): Promise<SdkResult<{ home: string; worktree?: string; directory?: string; [key: string]: unknown }>> }
+  experimental: { session: { list(input?: any): Promise<SdkResult<any[]>> } }
 }
 
 // --- SSE stream helper ---
