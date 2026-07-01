@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.webview.json",
+  "compilerOptions": {
+    "baseUrl": "..",
+    "paths": {
+      "@/*": ["../ui/src/*"],
+      "@vscode/*": ["./webview/*"],
+      "@rok-desktop/ui/*": ["../ui/src/*"]
+    }
+  },
+  "include": ["**/*"]
+}

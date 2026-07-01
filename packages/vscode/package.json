@@ -1,0 +1,254 @@
+{
+  "name": "rok-desktop",
+  "displayName": "Rok Desktop",
+  "description": "%extension.description%",
+  "version": "1.13.8",
+  "publisher": "rokcode",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rokcode/rok-desktop.git"
+  },
+  "qna": "https://discord.gg/ZYRSdnwwKA",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Other"
+  ],
+  "keywords": [
+    "ai",
+    "claude",
+    "gpt",
+    "agent",
+    "coding",
+    "chatgpt",
+    "groq",
+    "assistant",
+    "opencode",
+    "rok-desktop"
+  ],
+  "icon": "assets/app-icon.png",
+  "main": "./dist/extension.js",
+  "l10n": "./l10n",
+  "activationEvents": [
+    "onCommand:rok-desktop.openSidebar",
+    "onCommand:rok-desktop.attachExplorerToChat",
+    "onView:rok-desktop.chatView"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "rok-desktop",
+          "title": "Rok Desktop",
+          "icon": "assets/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "rok-desktop": [
+        {
+          "type": "webview",
+          "id": "rok-desktop.chatView",
+          "name": "%views.chat.name%"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "rok-desktop.openSidebar",
+        "category": "Rok Desktop",
+        "title": "%command.openSidebar.title%",
+        "icon": {
+          "light": "assets/icon.svg",
+          "dark": "assets/icon-titlebar.svg"
+        }
+      },
+      {
+        "command": "rok-desktop.focusChat",
+        "category": "Rok Desktop",
+        "title": "%command.focusChat.title%"
+      },
+      {
+        "command": "rok-desktop.restartApi",
+        "category": "Rok Desktop",
+        "title": "%command.restartApi.title%"
+      },
+      {
+        "command": "rok-desktop.showOpenCodeStatus",
+        "category": "Rok Desktop",
+        "title": "%command.showOpenCodeStatus.title%"
+      },
+      {
+        "command": "rok-desktop.openAgentManager",
+        "category": "Rok Desktop",
+        "title": "%command.openAgentManager.title%",
+        "icon": "$(circuit-board)"
+      },
+      {
+        "command": "rok-desktop.openActiveSessionInEditor",
+        "category": "Rok Desktop",
+        "title": "%command.openActiveSessionInEditor.title%",
+        "icon": "$(link-external)"
+      },
+      {
+        "command": "rok-desktop.openNewSessionInEditor",
+        "category": "Rok Desktop",
+        "title": "%command.openNewSessionInEditor.title%",
+        "icon": {
+          "light": "assets/icon.svg",
+          "dark": "assets/icon-titlebar.svg"
+        }
+      },
+      {
+        "command": "rok-desktop.openCurrentOrNewSessionInEditor",
+        "category": "Rok Desktop",
+        "title": "%command.openCurrentOrNewSessionInEditor.title%",
+        "icon": "$(link-external)"
+      },
+      {
+        "command": "rok-desktop.addToContext",
+        "category": "Rok Desktop",
+        "title": "%command.addToContext.title%"
+      },
+      {
+        "command": "rok-desktop.explain",
+        "category": "Rok Desktop",
+        "title": "%command.explain.title%"
+      },
+      {
+        "command": "rok-desktop.improveCode",
+        "category": "Rok Desktop",
+        "title": "%command.improveCode.title%"
+      },
+      {
+        "command": "rok-desktop.newSession",
+        "category": "Rok Desktop",
+        "title": "%command.newSession.title%",
+        "icon": "$(add)"
+      },
+      {
+        "command": "rok-desktop.showSettings",
+        "category": "Rok Desktop",
+        "title": "%command.showSettings.title%",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "rok-desktop.attachExplorerToChat",
+        "category": "Rok Desktop",
+        "title": "%command.attachExplorerToChat.title%"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "rok-desktop.submenu",
+        "label": "Rok Desktop"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "submenu": "rok-desktop.submenu",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "rok-desktop.attachExplorerToChat",
+          "when": "resourceScheme == file && explorerResourceIsFolder == false",
+          "group": "navigation@50"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "rok-desktop.openNewSessionInEditor",
+          "group": "navigation@1"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "rok-desktop.newSession",
+          "when": "view == rok-desktop.chatView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "rok-desktop.openCurrentOrNewSessionInEditor",
+          "when": "view == rok-desktop.chatView",
+          "group": "navigation@2"
+        },
+        {
+          "command": "rok-desktop.openAgentManager",
+          "when": "view == rok-desktop.chatView",
+          "group": "navigation@3"
+        },
+        {
+          "command": "rok-desktop.showSettings",
+          "when": "view == rok-desktop.chatView",
+          "group": "navigation@4"
+        }
+      ],
+      "rok-desktop.submenu": [
+        {
+          "command": "rok-desktop.explain"
+        },
+        {
+          "command": "rok-desktop.improveCode"
+        },
+        {
+          "command": "rok-desktop.addToContext"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Rok Desktop",
+      "properties": {
+        "rok-desktop.apiUrl": {
+          "type": "string",
+          "default": "",
+          "description": "%configuration.apiUrl.description%"
+        },
+        "rok-desktop.opencodeBinary": {
+          "type": "string",
+          "default": "",
+          "description": "%configuration.opencodeBinary.description%"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "bun run build",
+    "build": "bun run build:extension && bun run build:webview",
+    "build:extension": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --minify --main-fields=module,main",
+    "build:webview": "VITE_OPENCODE_URL=/api vite build",
+    "dev": "concurrently -n \"ext,web\" -c \"cyan,magenta\" \"bun run watch:extension\" \"bun run dev:webview\"",
+    "dev:webview": "vite --host localhost --port 5173 --strictPort",
+    "watch:extension": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --watch --sourcemap --main-fields=module,main",
+    "watch:webview": "vite build --watch",
+    "type-check": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.webview.json",
+    "lint": "bun x eslint --ext .ts,.tsx src webview",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.7",
+    "@types/vscode": "^1.85.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "@vscode/vsce": "^3.2.1",
+    "concurrently": "^9.2.1",
+    "esbuild": "^0.28.0",
+    "typescript": "~5.9.0",
+    "vite": "^7.1.2"
+  },
+  "dependencies": {
+    "@rok-desktop/ui": "workspace:*",
+    "@opencode-ai/sdk": "^1.17.9",
+    "adm-zip": "^0.5.16",
+    "jsonc-parser": "^3.3.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "yaml": "^2.8.1"
+  }
+}

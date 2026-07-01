@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "214055223565",
+    "project_id": "rok-code",
+    "storage_bucket": "rok-code.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214055223565:android:c3d69f469cb5be5d817044",
+        "android_client_info": {
+          "package_name": "com.ecc.rokcode"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRSwdCiP2KiOiZl3Hrs87wqUTTGV83Uqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
