@@ -167,7 +167,7 @@ function shouldSkipCompression(req, res) {
   return headerIncludesEventStream(res.getHeader('Content-Type'));
 }
 
-const OPENCHAMBER_VERSION = (() => {
+const ROK_DESKTOP_VERSION = (() => {
   try {
     const packagePath = path.resolve(__dirname, '..', 'package.json');
     const raw = fs.readFileSync(packagePath, 'utf8');
@@ -557,7 +557,7 @@ const ENV_SKIP_OPENCODE_START = process.env.OPENCODE_SKIP_START === 'true' ||
                                     process.env.ROK_DESKTOP_SKIP_OPENCODE_START === 'true' ||
                                     process.env.ROKCODE_SKIP_START === 'true';
 const ENV_DESKTOP_NOTIFY = (() => {
-  if (process.env.ROK_DESKTOP_DESKTOP_NOTIFY === 'true') {
+  if (process.env.ROK_DESKTOP_NOTIFY === 'true') {
     return true;
   }
 
@@ -610,7 +610,7 @@ const ensureOpenCodeApiPrefix = (...args) => openCodeNetworkRuntime.ensureOpenCo
 const scheduleOpenCodeApiDetection = (...args) => openCodeNetworkRuntime.scheduleOpenCodeApiDetection(...args);
 
 const ENV_CONFIGURED_API_PREFIX = normalizeApiPrefix(
-  process.env.OPENCODE_API_PREFIX || process.env.OPENCHAMBER_API_PREFIX || ''
+  process.env.OPENCODE_API_PREFIX || process.env.ROK_DESKTOP_API_PREFIX || ''
 );
 
   if (ENV_CONFIGURED_API_PREFIX && ENV_CONFIGURED_API_PREFIX !== '') {
@@ -1178,7 +1178,7 @@ async function main(options = {}) {
 
   const bootstrapResult = bootstrapRuntime.setupBaseRoutes(app, {
     process,
-    rokDesktopVersion: OPENCHAMBER_VERSION,
+    rokDesktopVersion: ROK_DESKTOP_VERSION,
     runtimeName: process.env.ROK_DESKTOP_RUNTIME || 'web',
     serverStartedAt,
     gracefulShutdown,

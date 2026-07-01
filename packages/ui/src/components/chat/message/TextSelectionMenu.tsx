@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { copyTextToClipboard } from '@/lib/clipboard';
 import { toast } from '@/components/ui';
 import { Icon } from "@/components/icon/Icon";
-import { OPENCHAMBER_PROJECT_NOTES_MAX_LENGTH, getProjectNotesAndTodos, saveProjectNotesAndTodos } from '@/lib/rokDesktopConfig';
+import { ROK_DESKTOP_PROJECT_NOTES_MAX_LENGTH, getProjectNotesAndTodos, saveProjectNotesAndTodos } from '@/lib/rokDesktopConfig';
 import { resolveProjectForSessionDirectory } from '@/lib/projectResolution';
 import { useEffectiveDirectory } from '@/hooks/useEffectiveDirectory';
 import { isVSCodeRuntime } from '@/lib/desktop';
@@ -32,7 +32,7 @@ interface SelectionPayload {
 }
 
 const appendDistilledInsightToNotes = (existingNotes: string, insight: string): string => {
-  const trimmedInsight = insight.trim().replace(/^[-*+]\s+/, '').slice(0, OPENCHAMBER_PROJECT_NOTES_MAX_LENGTH);
+  const trimmedInsight = insight.trim().replace(/^[-*+]\s+/, '').slice(0, ROK_DESKTOP_PROJECT_NOTES_MAX_LENGTH);
   if (!trimmedInsight) {
     return existingNotes;
   }

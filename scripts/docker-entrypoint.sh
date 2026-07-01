@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 set -eu
 
-HOME="/home/openchamber"
+HOME="/home/rok-desktop"
 
-OPENCODE_CONFIG_DIR="${OPENCODE_CONFIG_DIR:-${HOME}/.config/opencode}"
-export OPENCODE_CONFIG_DIR
+Rokcode_CONFIG_DIR="${Rokcode_CONFIG_DIR:-${HOME}/.config/rokcode}"
+export Rokcode_CONFIG_DIR
 
 SSH_DIR="${HOME}/.ssh"
 SSH_PRIVATE_KEY_PATH="${SSH_DIR}/id_ed25519"
@@ -40,33 +40,19 @@ if [ -f "${SSH_PUBLIC_KEY_PATH}" ]; then
 fi
 
 # Handle UI password environment variables. UI_PASSWORD is kept as a legacy
-# alias; OPENCHAMBER_UI_PASSWORD is the canonical runtime variable.
-if [ -z "${OPENCHAMBER_UI_PASSWORD:-}" ] && [ -n "${UI_PASSWORD:-}" ]; then
-  OPENCHAMBER_UI_PASSWORD="$UI_PASSWORD"
-  export OPENCHAMBER_UI_PASSWORD
+# alias; ROK_DESKTOP_UI_PASSWORD is the canonical runtime variable.
+if [ -z "${ROK_DESKTOP_UI_PASSWORD:-}" ] && [ -n "${UI_PASSWORD:-}" ]; then
+  ROK_DESKTOP_UI_PASSWORD="$UI_PASSWORD"
+  export ROK_DESKTOP_UI_PASSWORD
 fi
 
-if [ -n "${OPENCHAMBER_UI_PASSWORD:-}" ]; then
+if [ -n "${ROK_DESKTOP_UI_PASSWORD:-}" ]; then
   echo "[entrypoint] UI password set, enabling authentication"
 fi
 
-if [ "${OH_MY_OPENCODE:-false}" = "true" ]; then
-  OMO_CONFIG_FILE="${OPENCODE_CONFIG_DIR}/oh-my-opencode.json"
-
-  if [ ! -f "${OMO_CONFIG_FILE}" ]; then
-    echo "[entrypoint] npm installing oh-my-opencode..."
-    npm install -g oh-my-opencode
-
-    OMO_INSTALL_ARGS="--no-tui --claude=no --openai=no --gemini=no --copilot=no --opencode-zen=no --zai-coding-plan=no --kimi-for-coding=no --skip-auth"
-
-    echo "[entrypoint] oh-my-opencode installing..."
-    oh-my-opencode install ${OMO_INSTALL_ARGS}
-  fi
-fi
-
 # Docker containers need to listen on all interfaces for port mapping to work.
-OPENCHAMBER_HOST="${OPENCHAMBER_HOST:-0.0.0.0}"
-export OPENCHAMBER_HOST
+ROK_DESKTOP_HOST="${ROK_DESKTOP_HOST:-0.0.0.0}"
+export ROK_DESKTOP_HOST
 
 echo "[entrypoint] starting..."
 
@@ -75,8 +61,8 @@ if [ "$#" -gt 0 ]; then
 fi
 
 set -- bun packages/web/bin/cli.js
-if [ -n "${OPENCHAMBER_UI_PASSWORD:-}" ]; then
-  set -- "$@" --ui-password "$OPENCHAMBER_UI_PASSWORD"
+if [ -n "${ROK_DESKTOP_UI_PASSWORD:-}" ]; then
+  set -- "$@" --ui-password "$ROK_DESKTOP_UI_PASSWORD"
 fi
 "$@"
 

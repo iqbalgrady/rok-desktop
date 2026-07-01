@@ -10,7 +10,7 @@ export const parseServeCliOptions = ({
     env.ROK_DESKTOP_UI_PASSWORD ||
     env.OPENCODE_UI_PASSWORD ||
     null;
-  const envCfTunnel = env.OPENCHAMBER_TRY_CF_TUNNEL === 'true';
+  const envCfTunnel = env.ROK_DESKTOP_TRY_CF_TUNNEL === 'true';
   const envTunnelProvider = env.ROK_DESKTOP_TUNNEL_PROVIDER || undefined;
   const envTunnelMode = env.ROK_DESKTOP_TUNNEL_MODE || undefined;
   const envTunnelConfigRaw = env.ROK_DESKTOP_TUNNEL_CONFIG;

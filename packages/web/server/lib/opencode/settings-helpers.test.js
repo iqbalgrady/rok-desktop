@@ -206,12 +206,12 @@ describe('settings helpers', () => {
   it('includes transient desktop LAN access runtime status in desktop settings response', () => {
     const helpers = createTestHelpers();
     const previousRuntime = process.env.ROK_DESKTOP_RUNTIME;
-    const previousActive = process.env.OPENCHAMBER_DESKTOP_LAN_ACCESS_ACTIVE;
-    const previousReason = process.env.OPENCHAMBER_DESKTOP_LAN_ACCESS_BLOCKED_REASON;
+    const previousActive = process.env.ROK_DESKTOP_LAN_ACCESS_ACTIVE;
+    const previousReason = process.env.ROK_DESKTOP_LAN_ACCESS_BLOCKED_REASON;
     try {
       process.env.ROK_DESKTOP_RUNTIME = 'desktop';
-      process.env.OPENCHAMBER_DESKTOP_LAN_ACCESS_ACTIVE = 'false';
-      process.env.OPENCHAMBER_DESKTOP_LAN_ACCESS_BLOCKED_REASON = 'missing-password';
+      process.env.ROK_DESKTOP_LAN_ACCESS_ACTIVE = 'false';
+      process.env.ROK_DESKTOP_LAN_ACCESS_BLOCKED_REASON = 'missing-password';
 
       const response = helpers.formatSettingsResponse({ desktopLanAccessEnabled: true });
       expect(response.desktopLanAccessActive).toBe(false);
@@ -219,10 +219,10 @@ describe('settings helpers', () => {
     } finally {
       if (typeof previousRuntime === 'string') process.env.ROK_DESKTOP_RUNTIME = previousRuntime;
       else delete process.env.ROK_DESKTOP_RUNTIME;
-      if (typeof previousActive === 'string') process.env.OPENCHAMBER_DESKTOP_LAN_ACCESS_ACTIVE = previousActive;
-      else delete process.env.OPENCHAMBER_DESKTOP_LAN_ACCESS_ACTIVE;
-      if (typeof previousReason === 'string') process.env.OPENCHAMBER_DESKTOP_LAN_ACCESS_BLOCKED_REASON = previousReason;
-      else delete process.env.OPENCHAMBER_DESKTOP_LAN_ACCESS_BLOCKED_REASON;
+      if (typeof previousActive === 'string') process.env.ROK_DESKTOP_LAN_ACCESS_ACTIVE = previousActive;
+      else delete process.env.ROK_DESKTOP_LAN_ACCESS_ACTIVE;
+      if (typeof previousReason === 'string') process.env.ROK_DESKTOP_LAN_ACCESS_BLOCKED_REASON = previousReason;
+      else delete process.env.ROK_DESKTOP_LAN_ACCESS_BLOCKED_REASON;
     }
   });
 

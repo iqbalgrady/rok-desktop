@@ -17,7 +17,7 @@ const enabled = () => {
   if (typeof window === 'undefined') return false;
   try {
     const params = new URLSearchParams(window.location.search);
-    return params.get('startupTrace') === '1' || window.localStorage?.getItem('OPENCHAMBER_STARTUP_TRACE') === '1';
+    return params.get('startupTrace') === '1' || window.localStorage?.getItem('ROK_DESKTOP_STARTUP_TRACE') === '1';
   } catch {
     return false;
   }

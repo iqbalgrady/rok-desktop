@@ -809,9 +809,9 @@ export const createSettingsHelpers = (dependencies) => {
       typographySizes: sanitizeTypographySizesPartial(settings.typographySizes),
       ...(process.env.ROK_DESKTOP_RUNTIME === 'desktop'
         ? {
-            desktopLanAccessActive: process.env.OPENCHAMBER_DESKTOP_LAN_ACCESS_ACTIVE === 'true',
+            desktopLanAccessActive: process.env.ROK_DESKTOP_LAN_ACCESS_ACTIVE === 'true',
             desktopLanAccessBlockedReason:
-              process.env.OPENCHAMBER_DESKTOP_LAN_ACCESS_BLOCKED_REASON === 'missing-password'
+              process.env.ROK_DESKTOP_LAN_ACCESS_BLOCKED_REASON === 'missing-password'
                 ? 'missing-password'
                 : null,
           }

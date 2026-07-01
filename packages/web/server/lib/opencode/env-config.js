@@ -7,7 +7,7 @@ export const resolveOpenCodeEnvConfig = (options = {}) => {
       env.OPENCODE_PORT ||
       env.ROKCODE_PORT ||
       env.ROK_DESKTOP_OPENCODE_PORT ||
-      env.OPENCHAMBER_INTERNAL_PORT;
+      env.ROK_DESKTOP_INTERNAL_PORT;
     if (!raw) {
       return null;
     }

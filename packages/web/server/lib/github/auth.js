@@ -317,7 +317,7 @@ export function getGitHubClientId() {
 }
 
 export function getGitHubScopes() {
-  const raw = process.env.OPENCHAMBER_GITHUB_SCOPES;
+  const raw = process.env.ROK_DESKTOP_GITHUB_SCOPES;
   const fromEnv = typeof raw === 'string' ? raw.trim() : '';
   if (fromEnv) return fromEnv;
 

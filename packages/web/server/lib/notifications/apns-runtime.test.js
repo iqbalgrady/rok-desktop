@@ -67,8 +67,8 @@ const isSend = ([url]) => String(url) === 'https://relay.test/v1/push/send';
 
 afterEach(() => {
   vi.unstubAllGlobals();
-  delete process.env.OPENCHAMBER_PUSH_RELAY_URL;
-  delete process.env.OPENCHAMBER_PUSH_RELAY_DISABLED;
+  delete process.env.ROK_DESKTOP_PUSH_RELAY_URL;
+  delete process.env.ROK_DESKTOP_PUSH_RELAY_DISABLED;
 });
 
 describe('apns runtime relay mode (default)', () => {
@@ -84,7 +84,7 @@ describe('apns runtime relay mode (default)', () => {
           }),
     );
     vi.stubGlobal('fetch', fetchMock);
-    process.env.OPENCHAMBER_PUSH_RELAY_URL = 'https://relay.test/v1/push/send';
+    process.env.ROK_DESKTOP_PUSH_RELAY_URL = 'https://relay.test/v1/push/send';
 
     const runtime = createApnsRuntime(makeDeps());
     await runtime.addOrUpdateApnsToken('s1', 'tokenA');
@@ -130,7 +130,7 @@ describe('apns runtime relay mode (default)', () => {
   it('reuses one persisted keypair (same serverId) across register + send', async () => {
     const fetchMock = vi.fn(async () => jsonResponse({ ok: true, results: [] }));
     vi.stubGlobal('fetch', fetchMock);
-    process.env.OPENCHAMBER_PUSH_RELAY_URL = 'https://relay.test/v1/push/send';
+    process.env.ROK_DESKTOP_PUSH_RELAY_URL = 'https://relay.test/v1/push/send';
 
     const deps = makeDeps();
     const runtime = createApnsRuntime(deps);
@@ -155,7 +155,7 @@ describe('apns runtime relay mode (default)', () => {
 
 describe('apns runtime direct fallback (relay disabled)', () => {
   it('signs an ES256 JWT and sends over http2 when relay is disabled', async () => {
-    process.env.OPENCHAMBER_PUSH_RELAY_DISABLED = 'true';
+    process.env.ROK_DESKTOP_PUSH_RELAY_DISABLED = 'true';
     const targeted = [];
     const http2 = {
       connect: () => ({

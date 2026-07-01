@@ -7,7 +7,7 @@ declare global {
     __ROK_DESKTOP_LOCAL_ORIGIN__?: string;
     __ROK_DESKTOP_ELECTRON__?: { runtime?: string; macVibrancy?: boolean; macVibrancySupported?: boolean };
     __ROK_DESKTOP_PLATFORM__?: string;
-    __ROK_DESKTOP_DESKTOP_BOOT_OUTCOME__?: DesktopBootOutcome;
+    __ROK_DESKTOP_BOOT_OUTCOME__?: DesktopBootOutcome;
   }
 
   interface WebviewElement extends HTMLElement {

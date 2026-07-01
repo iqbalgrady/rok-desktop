@@ -1169,11 +1169,11 @@ const spawnLocalServer = async () => {
   // set before the first import. After this point, the same env is used by
   // both the Electron main and the server running inside it.
   process.env.ROK_DESKTOP_HOST = bindHost;
-  process.env.OPENCHAMBER_DESKTOP_LAN_ACCESS_ACTIVE = effectiveLanAccessEnabled ? 'true' : 'false';
+  process.env.ROK_DESKTOP_LAN_ACCESS_ACTIVE = effectiveLanAccessEnabled ? 'true' : 'false';
   if (lanAccessBlockedByMissingPassword) {
-    process.env.OPENCHAMBER_DESKTOP_LAN_ACCESS_BLOCKED_REASON = 'missing-password';
+    process.env.ROK_DESKTOP_LAN_ACCESS_BLOCKED_REASON = 'missing-password';
   } else {
-    delete process.env.OPENCHAMBER_DESKTOP_LAN_ACCESS_BLOCKED_REASON;
+    delete process.env.ROK_DESKTOP_LAN_ACCESS_BLOCKED_REASON;
   }
   process.env.ROK_DESKTOP_DIST_DIR = resolveWebDistDir();
   process.env.ROK_DESKTOP_RUNTIME = 'desktop';
@@ -1183,7 +1183,7 @@ const spawnLocalServer = async () => {
     env: process.env,
     homedir: () => os.homedir(),
   });
-  process.env.ROK_DESKTOP_DESKTOP_NOTIFY = 'true';
+  process.env.ROK_DESKTOP_NOTIFY = 'true';
   if (desktopUiPassword) {
     process.env.ROK_DESKTOP_UI_PASSWORD = desktopUiPassword;
   } else {
@@ -1338,7 +1338,7 @@ const buildInitScript = (localOrigin, bootOutcome, apiBaseUrl = '', clientToken 
   const outcome = JSON.stringify(bootOutcome ?? null);
   return [
     '(function(){',
-    `try{var __oc_local=${local};var __oc_api=${apiBase};var __oc_headers=${headers};var __oc_packaged=${packagedOrigin};var __oc_origin=window.location&&window.location.origin||'';var __oc_is_packaged=__oc_origin===__oc_packaged;var __oc_is_local=__oc_local&&__oc_origin===new URL(__oc_local).origin;window.__ROK_DESKTOP_MACOS_MAJOR__=${macVersion};window.__ROK_DESKTOP_LOCAL_ORIGIN__=__oc_local;window.__ROK_DESKTOP_API_BASE_URL__=__oc_api;if(__oc_is_local||__oc_is_packaged){window.__ROK_DESKTOP_HOME__=${home};window.__ROK_DESKTOP_RUNTIME_HEADERS__=__oc_headers;}if((__oc_is_local||__oc_is_packaged)&&${token}){window.__ROK_DESKTOP_CLIENT_TOKEN__=${token};}var __oc_bo=${outcome};if(__oc_bo){window.__ROK_DESKTOP_DESKTOP_BOOT_OUTCOME__=__oc_bo;}}catch(_e){}`,
+    `try{var __oc_local=${local};var __oc_api=${apiBase};var __oc_headers=${headers};var __oc_packaged=${packagedOrigin};var __oc_origin=window.location&&window.location.origin||'';var __oc_is_packaged=__oc_origin===__oc_packaged;var __oc_is_local=__oc_local&&__oc_origin===new URL(__oc_local).origin;window.__ROK_DESKTOP_MACOS_MAJOR__=${macVersion};window.__ROK_DESKTOP_LOCAL_ORIGIN__=__oc_local;window.__ROK_DESKTOP_API_BASE_URL__=__oc_api;if(__oc_is_local||__oc_is_packaged){window.__ROK_DESKTOP_HOME__=${home};window.__ROK_DESKTOP_RUNTIME_HEADERS__=__oc_headers;}if((__oc_is_local||__oc_is_packaged)&&${token}){window.__ROK_DESKTOP_CLIENT_TOKEN__=${token};}var __oc_bo=${outcome};if(__oc_bo){window.__ROK_DESKTOP_BOOT_OUTCOME__=__oc_bo;}}catch(_e){}`,
     '}())',
   ].join('');
 };
@@ -2463,7 +2463,7 @@ const resolveInitialUrl = async () => {
   let requestHeaders = {};
   let remoteProbe = null;
 
-  const envTarget = normalizeHostUrl(process.env.OPENCHAMBER_SERVER_URL || '');
+  const envTarget = normalizeHostUrl(process.env.ROK_DESKTOP_SERVER_URL || '');
   const config = readDesktopHostsConfig();
   if (envTarget) {
     apiBaseUrl = envTarget;
@@ -3483,7 +3483,7 @@ const handleInvoke = async (browserWindow, command, args = {}) => {
       const nextConfigInput = args.input || args.config || {};
       await writeDesktopHostsConfig(nextConfigInput);
       const updatedConfig = readDesktopHostsConfig();
-      const envTarget = normalizeHostUrl(process.env.OPENCHAMBER_SERVER_URL || '');
+      const envTarget = normalizeHostUrl(process.env.ROK_DESKTOP_SERVER_URL || '');
       if (Object.prototype.hasOwnProperty.call(nextConfigInput, 'localClientToken') && isLocalRuntimeUrl(state.apiBaseUrl || state.sidecarUrl || state.localOrigin || '')) {
         state.clientToken = readDesktopLocalClientToken();
       }

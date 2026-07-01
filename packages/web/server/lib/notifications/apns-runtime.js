@@ -5,7 +5,7 @@
 //   - Relay (default): POST tokens + generic text to the central Cloudflare relay, which
 //     holds the single project APNs key and signs+sends — so users configure nothing.
 //   - Direct (fallback): sign an ES256 JWT with Node crypto and send over HTTP/2 ourselves,
-//     for self-hosters who set ROK_DESKTOP_APNS_* and OPENCHAMBER_PUSH_RELAY_DISABLED=true.
+//     for self-hosters who set ROK_DESKTOP_APNS_* and ROK_DESKTOP_PUSH_RELAY_DISABLED=true.
 // Wired into the same trigger fanout as web push (see runtime.js); the relay carries only
 // generic, model-based text (no session content) — see APNS.md.
 
@@ -373,8 +373,8 @@ export const createApnsRuntime = (deps) => {
   // generic text; the relay signs + sends and reports which tokens to drop. Direct mode (below)
   // is the fallback for self-hosters who set ROK_DESKTOP_APNS_* and disable the relay.
   const resolveRelayConfig = () => {
-    if (trimmedEnv('OPENCHAMBER_PUSH_RELAY_DISABLED') === 'true') return null;
-    const url = trimmedEnv('OPENCHAMBER_PUSH_RELAY_URL') || DEFAULT_RELAY_URL;
+    if (trimmedEnv('ROK_DESKTOP_PUSH_RELAY_DISABLED') === 'true') return null;
+    const url = trimmedEnv('ROK_DESKTOP_PUSH_RELAY_URL') || DEFAULT_RELAY_URL;
     return {
       url,
       registerUrl: url.replace(/\/send$/, '/register-token'),

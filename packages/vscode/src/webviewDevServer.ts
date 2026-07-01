@@ -23,7 +23,7 @@ export const resolveWebviewDevServerUrl = (context: vscode.ExtensionContext): st
     return null;
   }
 
-  if (process.env.OPENCHAMBER_DISABLE_WEBVIEW_HMR === '1') {
+  if (process.env.ROK_DESKTOP_DISABLE_WEBVIEW_HMR === '1') {
     return null;
   }
 

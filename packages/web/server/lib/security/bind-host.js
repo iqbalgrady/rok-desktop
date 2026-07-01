@@ -32,9 +32,9 @@ export const isLoopbackBindHost = (host) => {
 export const isNetworkExposedBindHost = (host) => !isLoopbackBindHost(host);
 
 export const isUnsafeUnauthenticatedLanAllowed = (env = process.env) =>
-  env?.OPENCHAMBER_ALLOW_UNAUTHENTICATED_LAN === 'true';
+  env?.ROK_DESKTOP_ALLOW_UNAUTHENTICATED_LAN === 'true';
 
 export const getUnauthenticatedLanErrorMessage = (host) =>
   `Rok Desktop refuses to bind to ${host || 'a network-exposed host'} without UI authentication. `
   + 'Set --ui-password or ROK_DESKTOP_UI_PASSWORD before exposing it over LAN, '
-  + 'or set OPENCHAMBER_ALLOW_UNAUTHENTICATED_LAN=true to accept the risk.';
+  + 'or set ROK_DESKTOP_ALLOW_UNAUTHENTICATED_LAN=true to accept the risk.';

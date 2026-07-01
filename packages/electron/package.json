@@ -121,7 +121,7 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "rok-desktop",
+      "owner": "iqbalgrady",
       "repo": "rok-desktop"
     }
   }
