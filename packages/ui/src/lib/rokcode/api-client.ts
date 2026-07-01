@@ -133,7 +133,7 @@ export interface RokcodeClient {
   config: {
     get(): Promise<SdkResult<unknown>>
     update(input: unknown): Promise<SdkResult<void>>
-    providers(): Promise<SdkResult<unknown>>
+    providers(input?: Record<string, unknown>): Promise<SdkResult<unknown>>
     reload(): Promise<SdkResult<void>>
   }
   project: {
@@ -158,7 +158,7 @@ export interface RokcodeClient {
   mcp: { status(): Promise<SdkResult<unknown>> }
   command: { list(): Promise<SdkResult<unknown>> }
   vcs: { get(): Promise<SdkResult<unknown>> }
-  app: { agents(): Promise<SdkResult<unknown>> }
+  app: { agents(input?: Record<string, unknown>): Promise<SdkResult<unknown>> }
   lsp: { status(): Promise<SdkResult<unknown>> }
   path: { get(): Promise<SdkResult<{ home: string; worktree?: string; directory?: string; [key: string]: unknown }>> }
   experimental: { session: { list(input?: any): Promise<SdkResult<any[]>> } }
@@ -231,7 +231,7 @@ export function createRokcodeClient(options: RokcodeClientOptions): RokcodeClien
     config: {
       get: () => http.get(`${API_PREFIX}/config`),
       update: (input) => http.patch(`${API_PREFIX}/config`, input),
-      providers: () => http.get(`${API_PREFIX}/config/providers`),
+      providers: (input?) => http.get(`${API_PREFIX}/config/providers${buildQuery(input)}`),
       reload: () => http.post<void>(`${API_PREFIX}/config/reload`),
     },
     project: {
@@ -256,7 +256,7 @@ export function createRokcodeClient(options: RokcodeClientOptions): RokcodeClien
     mcp: { status: () => http.get(`${API_PREFIX}/mcp/status`) },
     command: { list: () => http.get(`${API_PREFIX}/command/list`) },
     vcs: { get: () => http.get(`${API_PREFIX}/vcs`) },
-    app: { agents: () => http.get(`${API_PREFIX}/agent`) },
+    app: { agents: (input?) => http.get(`${API_PREFIX}/agent${buildQuery(input)}`) },
     lsp: { status: () => http.get(`${API_PREFIX}/lsp/status`) },
     path: { get: () => http.get<{ home: string; worktree?: string; directory?: string; [key: string]: unknown }>(`${API_PREFIX}/path`) },
     experimental: { session: { list: (input: any) => http.get<any[]>(`${API_PREFIX}/session${buildQuery(input)}`) } },
