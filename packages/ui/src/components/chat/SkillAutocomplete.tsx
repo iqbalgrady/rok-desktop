@@ -47,7 +47,7 @@ export const SkillAutocomplete = React.forwardRef<SkillAutocompleteHandle, Skill
       ? skills.filter((skill) => fuzzyMatch(skill.name, normalizedQuery))
       : skills;
 
-    const sorted = [...matches].sort((a, b) => {
+    const sorted = [...matches].sort((a, b) => { if (!a?.name || !b?.name) return 0;
       // Sort by project scope first, then name
       if (a.scope === 'project' && b.scope !== 'project') return -1;
       if (a.scope !== 'project' && b.scope === 'project') return 1;

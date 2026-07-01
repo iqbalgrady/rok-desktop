@@ -50,7 +50,7 @@ export const SnippetAutocomplete = React.forwardRef<SnippetAutocompleteHandle, S
     const matches = query.length
       ? snippets.filter((snippet) => fuzzyMatch(snippet.name, query) || snippet.aliases.some((alias) => fuzzyMatch(alias, query)))
       : snippets;
-    const sortedMatches = [...matches].sort((a, b) => {
+    const sortedMatches = [...matches].sort((a, b) => { if (!a?.name || !b?.name) return 0;
       if (a.source === 'project' && b.source !== 'project') return -1;
       if (a.source !== 'project' && b.source === 'project') return 1;
       return a.name.localeCompare(b.name);

@@ -269,7 +269,7 @@ export const FileMentionAutocomplete = React.forwardRef<FileMentionHandle, FileM
         description: agent.description,
         mode: agent.mode,
       }))
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => (a?.name || "").localeCompare(b?.name || ""));
     setAgents(filtered);
   }, [getVisibleAgents, searchQuery]);
 

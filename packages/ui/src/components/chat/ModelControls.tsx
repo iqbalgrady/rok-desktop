@@ -498,7 +498,7 @@ export const ModelControls: React.FC<ModelControlsProps> = ({
     }, [agents]);
 
     const sortedAndFilteredAgents = React.useMemo(() => {
-        const sorted = [...selectableDesktopAgents].sort((a, b) => a.name.localeCompare(b.name));
+        const sorted = [...selectableDesktopAgents].sort((a, b) => (a?.name || "").localeCompare(b?.name || ""));
         if (!agentSearchQuery.trim()) {
             return sorted;
         }

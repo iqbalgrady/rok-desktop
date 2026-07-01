@@ -191,7 +191,7 @@ export const CommandAutocomplete = React.forwardRef<CommandAutocompleteHandle, C
             )
           : allCommands).filter(cmd => allowInitCommand || cmd.name !== 'init');
 
-        filtered.sort((a, b) => {
+        filtered.sort((a, b) => { if (!a?.name || !b?.name) return 0;
           const aStartsWith = a.name.toLowerCase().startsWith(searchQuery.toLowerCase());
           const bStartsWith = b.name.toLowerCase().startsWith(searchQuery.toLowerCase());
           if (aStartsWith && !bStartsWith) return -1;
