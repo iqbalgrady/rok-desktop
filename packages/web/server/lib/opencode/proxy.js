@@ -313,7 +313,7 @@ export const registerOpenCodeProxy = (app, deps) => {
       const requestUrl = typeof req.originalUrl === 'string' && req.originalUrl.length > 0
         ? req.originalUrl
         : (typeof req.url === 'string' ? req.url : '');
-      const upstreamPath = requestUrl.startsWith('/api') ? requestUrl.slice(4) || '/' : requestUrl;
+      const upstreamPath = requestUrl;
       const headers = normalizeForwardedDirectoryHeaders(
         collectForwardProxyHeaders(req.headers, getOpenCodeAuthHeaders())
       );
@@ -469,7 +469,7 @@ export const registerOpenCodeProxy = (app, deps) => {
     const requestUrl = typeof req.originalUrl === 'string' && req.originalUrl.length > 0
       ? req.originalUrl
       : (typeof req.url === 'string' ? req.url : '');
-    const upstreamPathRaw = requestUrl.startsWith('/api') ? requestUrl.slice(4) || '/' : requestUrl;
+    const upstreamPathRaw = requestUrl;
     return canonicalizeDirectoryQuery(upstreamPathRaw);
   };
 
@@ -664,7 +664,7 @@ export const registerOpenCodeProxy = (app, deps) => {
   const apiProxy = createProxyMiddleware({
     target: resolveProxyTarget(),
     changeOrigin: true,
-    pathRewrite: { '^/api': '' },
+    pathRewrite: {},
     // Dynamic target — port can change after restart
     router: () => resolveProxyTarget(),
     on: {
