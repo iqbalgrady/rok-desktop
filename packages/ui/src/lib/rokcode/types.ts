@@ -22,3 +22,4 @@ export type {
 } from "@opencode-ai/sdk/v2"
 
 export type { RokcodeClient, PromptInput, PromptDelivery, HistoryEvent, StreamEvent, SseEvent } from "./api-client"
+export type { SdkResult } from "./api-client"

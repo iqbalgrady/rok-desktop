@@ -50,7 +50,7 @@ export const IntelligenceLayerDashboard: React.FC = () => {
       {/* Token Economy */}
       <div className="rounded-lg border border-border bg-[var(--surface-elevated)] p-4">
         <div className="flex items-start gap-3">
-          <Icon name="coins" className="h-5 w-5 shrink-0 text-muted-foreground mt-0.5" />
+          <Icon name="archive" className="h-5 w-5 shrink-0 text-muted-foreground mt-0.5" />
           <div>
             <div className="typography-ui-label text-foreground">Token Economy</div>
             <div className="typography-micro text-muted-foreground/70 mt-1">
@@ -63,7 +63,7 @@ export const IntelligenceLayerDashboard: React.FC = () => {
       {/* Training Mode */}
       <div className="rounded-lg border border-border bg-[var(--surface-elevated)] p-4">
         <div className="flex items-start gap-3">
-          <Icon name="graduation-cap" className="h-5 w-5 shrink-0 text-muted-foreground mt-0.5" />
+          <Icon name="book-open" className="h-5 w-5 shrink-0 text-muted-foreground mt-0.5" />
           <div>
             <div className="typography-ui-label text-foreground">Training & Persona System</div>
             <div className="typography-micro text-muted-foreground/70 mt-1">

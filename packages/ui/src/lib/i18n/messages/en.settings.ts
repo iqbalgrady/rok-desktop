@@ -51,6 +51,7 @@ export const settingsDict = {
   'settings.page.notifications.title': 'Notifications',
   'settings.page.voice.title': 'Voice',
   'settings.page.tunnel.title': 'Remote Tunnel',
+  'settings.page.rokcode.title': 'Rokcode',
   'settings.page.about.title': 'About',
   'settings.page.snippets.title': 'Snippets',
   'settings.snippets.sidebar.title': 'Snippets',

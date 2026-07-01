@@ -1,6 +1,6 @@
 import React from "react"
 import { Icon } from "@/components/icon/Icon"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/Tooltip"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 interface CodingToolAction {
   id: string

@@ -114,7 +114,7 @@ export const SdlcPipelineDashboard: React.FC = () => {
       {/* Run full pipeline */}
       <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
         <div className="flex items-start gap-3">
-          <Icon name="play-circle" className="h-5 w-5 shrink-0 text-primary mt-0.5" />
+          <Icon name="play" className="h-5 w-5 shrink-0 text-primary mt-0.5" />
           <div>
             <div className="typography-ui-label text-foreground flex items-center gap-2">
               Run Full Pipeline
