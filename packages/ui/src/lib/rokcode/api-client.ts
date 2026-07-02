@@ -46,7 +46,7 @@ class RokcodeHttpClient {
   private buildHeaders(extra?: HeadersInit): HeadersInit {
     const result: Record<string, string> = { ...(this.headers as Record<string, string> || {}) }
     if (extra) Object.assign(result, extra as Record<string, string>)
-    if (this.directory) result["x-rokcode-directory"] = this.directory
+    if (this.directory) result["x-opencode-directory"] = this.directory
     return result
   }
 
