@@ -698,7 +698,7 @@ export const registerOpenCodeProxy = (app, deps) => {
         }
       },
       error: (err, _req, res) => {
-        console.error('[proxy] OpenCode proxy error:', err.message);
+        console.error('[proxy] Proxy error:', err.message, 'path:', _req?.url, 'target:', resolveProxyTarget());
         if (res && !res.headersSent && typeof res.status === 'function') {
           res.status(503).json({ error: 'Rokcode service unavailable' });
         }
@@ -722,4 +722,6 @@ export const registerOpenCodeProxy = (app, deps) => {
   });
 
   app.use('/api', apiProxy);
+  // Instance routes (no /api prefix) — used by session prompt_async, model, etc.
+  app.use('/session', apiProxy);
 };

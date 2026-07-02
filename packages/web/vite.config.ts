@@ -93,6 +93,11 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
       },
+      '/session': {
+        target: `http://127.0.0.1:${process.env.ROK_DESKTOP_PORT || 3001}`,
+        changeOrigin: true,
+        ws: true,
+      },
     },
   },
   build: {

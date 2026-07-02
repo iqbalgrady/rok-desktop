@@ -6,7 +6,7 @@ export interface RuntimeFetchOptions extends RequestInit {
 }
 
 const shouldResolveApiPath = (input: string): boolean => {
-  return input.startsWith('/api/') || input === '/api' || input.startsWith('/auth/') || input === '/auth' || input === '/health';
+  return input.startsWith('/api/') || input === '/api' || input.startsWith('/auth/') || input === '/auth' || input === '/health' || input.startsWith('/session/');
 };
 
 const getCurrentOrigin = (): string => {
