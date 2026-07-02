@@ -847,8 +847,7 @@ class OpencodeService {
         // V2 protocol format: { prompt: { text, files?, agents? }, id?, delivery?, resume? }
         // model/agent/variant are set via switchModel/switchAgent endpoints, not in prompt payload
         const promptText = [params.prefaceText?.trim(), params.text?.trim()]
-          .filter(Boolean).join('
-');
+          .filter(Boolean).join('\n');
         const promptFiles = [];
         if (params.files && params.files.length > 0) {
           for (const file of params.files) {
