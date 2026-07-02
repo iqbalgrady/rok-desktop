@@ -866,7 +866,7 @@ class OpencodeService {
             await this.client.session.switchModel({
               sessionID: params.id,
               ...(requestDirectory ? { directory: requestDirectory } : {}),
-              model: `${params.providerID}/${params.modelID}`,
+              model: { id: params.modelID, providerID: params.providerID, ...(params.variant ? { variant: params.variant } : {}) },
             });
           } catch (e) { /* best-effort — session may already have this model */ }
         }
