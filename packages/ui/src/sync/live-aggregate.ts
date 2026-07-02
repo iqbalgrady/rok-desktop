@@ -150,7 +150,11 @@ export function aggregateLiveSessions(states: Iterable<LiveStateSlice>): Session
   }
 
   return Array.from(sessionsById.values()).sort((left, right) => {
-    return getSessionUpdatedAt(right) - getSessionUpdatedAt(left)
+    // Sort by created DESC (stable — doesn't re-sort on every SSE updated event)
+    const leftCreated = toFiniteNumber(left.time?.created) ?? 0
+    const rightCreated = toFiniteNumber(right.time?.created) ?? 0
+    if (leftCreated !== rightCreated) return rightCreated - leftCreated
+    return right.id.localeCompare(left.id)
   })
 }
 

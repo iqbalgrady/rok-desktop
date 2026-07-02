@@ -148,7 +148,7 @@ function updateLiveSession(session: Session, directory?: string): void {
     const next = [...current]
     next[index] = mergeSessionDirectoryMetadata(session, current[index])
     store.setState({ session: next })
-    return
+    // Don't return — update ALL stores that contain this session
   }
 }
 

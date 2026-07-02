@@ -1703,7 +1703,26 @@ export function SyncProvider(props: {
                 )
                 return
               }
-              store.setState({ session: sessions, sessionTotal: rootSessions.length, limit: Math.max(sessions.length, 50) })
+              // Merge by ID: preserve any sessions added by SSE between fetch start and finish
+              if (currentSessions.length > 0 && sessions.length > 0) {
+                const incomingById = new Map(sessions.map((s: any) => [s.id, s]))
+                const merged = [...currentSessions]
+                const seen = new Set<string>()
+                // Replace existing entries with incoming (server is source of truth)
+                for (let i = 0; i < merged.length; i++) {
+                  if (incomingById.has(merged[i].id)) {
+                    merged[i] = incomingById.get(merged[i].id)
+                    seen.add(merged[i].id)
+                  }
+                }
+                // Append new sessions from incoming that weren't in current
+                for (const [id, s] of incomingById) {
+                  if (!seen.has(id)) merged.push(s)
+                }
+                store.setState({ session: merged, sessionTotal: rootSessions.length, limit: Math.max(merged.length, 50) })
+              } else {
+                store.setState({ session: sessions, sessionTotal: rootSessions.length, limit: Math.max(sessions.length, 50) })
+              }
               ingestDirectoryStateIntoRoutingIndex(routingIndex, directory, store.getState())
             }),
           })

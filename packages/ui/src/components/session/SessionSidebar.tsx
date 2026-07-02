@@ -1296,6 +1296,7 @@ export const SessionSidebar: React.FC<SessionSidebarProps> = ({
       renderContext: 'project' | 'recent' = 'project',
       renderExtras?: SessionNodeRenderExtras,
     ): React.ReactNode => (
+      <React.Fragment key={node.session.id}>
       <SessionNodeItem
         node={node}
         depth={depth}
@@ -1344,6 +1345,7 @@ export const SessionSidebar: React.FC<SessionSidebarProps> = ({
         childRenderExtrasFor={renderExtras?.childRenderExtrasFor}
         liveSessionById={liveSessionById}
       />
+      </React.Fragment>
     ),
   );
 

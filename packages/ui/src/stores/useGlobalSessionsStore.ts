@@ -30,6 +30,7 @@ type GlobalSessionsState = {
 const PAGE_SIZE = 500;
 
 let inflightLoad: Promise<LoadResult> | null = null;
+let inflightRefresh: Promise<LoadResult> | null = null;
 
 const normalizePath = (value?: string | null): string | null => {
   if (typeof value !== 'string') {
@@ -167,7 +168,10 @@ const getSessionUpdatedAt = (session: Session): number => {
 
 const sortSessionsByUpdated = (sessions: Session[]): Session[] => {
   return [...sessions].sort((left, right) => {
-    const timeDelta = getSessionUpdatedAt(right) - getSessionUpdatedAt(left);
+    // Sort by created DESC (stable — doesn't re-sort on every SSE updated event)
+    const leftCreated = getSessionCreatedAt(left);
+    const rightCreated = getSessionCreatedAt(right);
+    const timeDelta = rightCreated - leftCreated;
     if (timeDelta !== 0) return timeDelta;
     return right.id.localeCompare(left.id);
   });
@@ -418,6 +422,12 @@ export const useGlobalSessionsStore = create<GlobalSessionsState>((set, get) => 
       return { activeSessions: state.activeSessions, archivedSessions: state.archivedSessions };
     }
 
+    // Dedup: if a refresh is already in-flight, return the same promise
+    if (inflightRefresh) {
+      return inflightRefresh;
+    }
+
+    const refreshPromise = (async () => {
     const sdk = opencodeClient.getSdkClient();
     const [active, archived] = await Promise.all([
       fetchDirectoryPages(sdk, directorySet, false),
@@ -467,6 +477,14 @@ export const useGlobalSessionsStore = create<GlobalSessionsState>((set, get) => 
 
     const state = get();
     return { activeSessions: state.activeSessions, archivedSessions: state.archivedSessions };
+    })();
+
+    inflightRefresh = refreshPromise;
+    try {
+      return await refreshPromise;
+    } finally {
+      inflightRefresh = null;
+    }
   },
 
   upsertSession: (session) => {

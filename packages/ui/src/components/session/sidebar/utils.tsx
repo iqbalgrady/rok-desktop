@@ -143,7 +143,12 @@ export const compareSessionsByPinnedAndTime = (
     return getSessionCreatedAt(b) - getSessionCreatedAt(a);
   }
 
-  return getSessionUpdatedAt(b) - getSessionUpdatedAt(a);
+  // Sort by created DESC (stable — doesn't re-sort on every SSE updated event)
+  const aCreated = getSessionCreatedAt(a);
+  const bCreated = getSessionCreatedAt(b);
+  if (aCreated !== bCreated) return bCreated - aCreated;
+  // Tiebreak by id for stable ordering
+  return b.id.localeCompare(a.id);
 };
 
 export const dedupeSessionsById = (sessions: Session[]): Session[] => {
