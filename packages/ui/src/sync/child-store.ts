@@ -32,12 +32,23 @@ function createDirectoryStore(directory: string): StoreApi<DirectoryStore> {
     replace: (next) => set(next),
   }))
 
-  // Subscribe to persist metadata changes back to localStorage
+  // Debounce persistence — avoid synchronous localStorage writes on every SSE burst
+  let persistTimer: ReturnType<typeof setTimeout> | null = null
+  let pendingState: { session?: unknown; vcs?: unknown; projectMeta?: unknown; icon?: unknown } = {}
   store.subscribe((state, prev) => {
-    if (state.vcs !== prev.vcs) persistVcs(directory, state.vcs)
-    if (state.projectMeta !== prev.projectMeta) persistProjectMeta(directory, state.projectMeta)
-    if (state.icon !== prev.icon) persistIcon(directory, state.icon)
-    if (state.session !== prev.session) persistSessions(directory, state.session)
+    if (state.vcs === prev.vcs && state.projectMeta === prev.projectMeta && state.icon === prev.icon && state.session === prev.session) return
+    pendingState = { session: state.session, vcs: state.vcs, projectMeta: state.projectMeta, icon: state.icon }
+    if (persistTimer) return
+    persistTimer = setTimeout(() => {
+      persistTimer = null
+      const s = pendingState
+      try {
+        if (s.vcs !== undefined) persistVcs(directory, s.vcs as any)
+        if (s.projectMeta !== undefined) persistProjectMeta(directory, s.projectMeta as any)
+        if (s.icon !== undefined) persistIcon(directory, s.icon as any)
+        if (s.session !== undefined) persistSessions(directory, s.session as any)
+      } catch {}
+    }, 500)
   })
 
   return store

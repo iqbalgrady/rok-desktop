@@ -73,7 +73,14 @@ class RokcodeHttpClient {
 
   private async request<T>(path: string, init: RequestInit = {}): Promise<SdkResult<T>> {
     try {
-      const res = await this.fetch(this.url(path), { ...init, headers: this.buildHeaders(init.headers) })
+      // Add 30s timeout to prevent hanging on stalled connections
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 30_000)
+      const signal = init.signal
+      if (signal) {
+        signal.addEventListener("abort", () => controller.abort())
+      }
+      const res = await this.fetch(this.url(path), { ...init, headers: this.buildHeaders(init.headers), signal: controller.signal }).finally(() => clearTimeout(timeout))
       const status = res.status
       const contentType = res.headers.get("content-type") || ""
       let data: any

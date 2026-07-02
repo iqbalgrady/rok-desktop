@@ -1,3 +1,6 @@
+
+// Stale fallback: if status is "busy" but no SSE event for >90s, treat as idle
+const STALE_BUSY_THRESHOLD_MS = 90_000
 import React from 'react';
 import { useSessionUIStore } from '@/sync/session-ui-store';
 import { useSessionStatus, useSessionMessages, useSessionPermissions, useSessionQuestions } from '@/sync/sync-context';

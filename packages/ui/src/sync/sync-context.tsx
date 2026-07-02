@@ -1,5 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useEffect, useRef, useCallback, useMemo } from "react"
+// Throttle stale resync to avoid reconnect storms
+let lastGlobalResyncAt = 0
+const MIN_RESYNC_INTERVAL_MS = 10_000
+
 import type { Event, Message, Part } from "@/lib/rokcode/types"
 import type { Session } from "@/lib/rokcode/types"
 import type { StoreApi } from "zustand"

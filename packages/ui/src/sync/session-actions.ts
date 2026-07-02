@@ -696,6 +696,23 @@ export async function optimisticSend(input: {
     },
   })
 
+  // Watchdog: auto-clear "busy" after 90s if no SSE completion event arrives
+  const watchdogKey = `__busy_watchdog_${input.sessionId}`
+  if ((globalThis as any)[watchdogKey]) clearTimeout((globalThis as any)[watchdogKey])
+  ;(globalThis as any)[watchdogKey] = setTimeout(() => {
+    const st = store.getState()
+    if (st.session_status?.[input.sessionId]?.type === "busy") {
+      store.setState({
+        session_status: {
+          ...st.session_status,
+          [input.sessionId]: { type: "idle" as const },
+        },
+      })
+      console.warn(`[watchdog] Session ${input.sessionId} stuck "busy" for 90s — auto-cleared to idle`)
+    }
+    delete (globalThis as any)[watchdogKey]
+  }, 90_000)
+
   try {
     await input.send(messageID)
   } catch (error) {
@@ -1152,12 +1169,16 @@ export async function fetchMessagesForSession(sessionID: string, directory?: str
     if (getSessionMaterializationStatus(store.getState(), sessionID).renderable) return
 
     const result = await retry(async () => {
-      const response = await s.session.messages({
-        sessionID,
-        directory: resolvedDir,
-        limit: getFetchPageSize(),
-      })
-      return response
+      const ac = new AbortController()
+      const timer = setTimeout(() => ac.abort(), 15_000)
+      try {
+        const response = await s.session.messages({
+          sessionID,
+          directory: resolvedDir,
+          limit: getFetchPageSize(),
+        })
+        return response
+      } finally { clearTimeout(timer) }
     })
 
     const records = (assertSdkSuccess(result, "session.messages") ?? [])

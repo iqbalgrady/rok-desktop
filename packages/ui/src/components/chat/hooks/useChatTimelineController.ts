@@ -482,7 +482,7 @@ export const useChatTimelineController = ({
             let loadedLimit = beforeLimit;
             const beforeTurnCount = turnModelRef.current.turnCount;
 
-            while (true) {
+            for (let __i = 0; __i < 5; __i++) {
                 await loadMoreMessages(targetSessionId, 'up');
                 if (sessionIdRef.current !== targetSessionId) {
                     return false;

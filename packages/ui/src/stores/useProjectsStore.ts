@@ -616,12 +616,17 @@ export const useProjectsStore = create<ProjectsStore>()(
       }
 
       const now = Date.now();
-      const nextProjects = projects.map((project) =>
-        project.id === id ? { ...project, lastOpenedAt: now } : project
-      );
-
-      set({ projects: nextProjects, activeProjectId: id });
-      persistProjects(nextProjects, id);
+      // Only rewrite projects array if lastOpenedAt is stale (>30s)
+      // This prevents cascade re-renders on every session switch
+      if (!target.lastOpenedAt || now - target.lastOpenedAt > 30_000) {
+        const idx = projects.indexOf(target);
+        const nextProjects = [...projects];
+        nextProjects[idx] = { ...target, lastOpenedAt: now };
+        set({ projects: nextProjects, activeProjectId: id });
+        persistProjects(nextProjects, id);
+      } else {
+        set({ activeProjectId: id });
+      }
 
       opencodeClient.setDirectory(target.path);
       useDirectoryStore.getState().setDirectory(target.path, { showOverlay: false });
@@ -641,12 +646,17 @@ export const useProjectsStore = create<ProjectsStore>()(
       }
 
       const now = Date.now();
-      const nextProjects = projects.map((project) =>
-        project.id === id ? { ...project, lastOpenedAt: now } : project
-      );
-
-      set({ projects: nextProjects, activeProjectId: id });
-      persistProjects(nextProjects, id);
+      // Only rewrite projects array if lastOpenedAt is stale (>30s)
+      // This prevents cascade re-renders on every session switch
+      if (!target.lastOpenedAt || now - target.lastOpenedAt > 30_000) {
+        const idx = projects.indexOf(target);
+        const nextProjects = [...projects];
+        nextProjects[idx] = { ...target, lastOpenedAt: now };
+        set({ projects: nextProjects, activeProjectId: id });
+        persistProjects(nextProjects, id);
+      } else {
+        set({ activeProjectId: id });
+      }
     },
 
     renameProject: (id: string, label: string) => {
