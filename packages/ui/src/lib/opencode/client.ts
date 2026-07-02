@@ -860,6 +860,16 @@ class OpencodeService {
         const promptAgents = (params.agentMentions ?? [])
           .filter(m => m?.name)
           .map(m => ({ name: m.name, ...(m.source ? { source: m.source } : {}) }));
+        // Set model on session before sending prompt (V2 requires switchModel endpoint)
+        if (params.providerID && params.modelID) {
+          try {
+            await this.client.session.switchModel({
+              sessionID: params.id,
+              ...(requestDirectory ? { directory: requestDirectory } : {}),
+              model: `${params.providerID}/${params.modelID}`,
+            });
+          } catch (e) { /* best-effort — session may already have this model */ }
+        }
         const result = await this.client.session.promptAsync({
           sessionID: params.id,
           ...(requestDirectory ? { directory: requestDirectory } : {}),
