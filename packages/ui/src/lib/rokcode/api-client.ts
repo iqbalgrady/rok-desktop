@@ -50,7 +50,10 @@ class RokcodeHttpClient {
     return result
   }
 
-  private url(path: string): string { return `${this.baseUrl}${path}` }
+  private url(path: string): string {
+    const base = this.baseUrl.replace(/\/api\/?$/, '')
+    return `${base}${path}`
+  }
 
   async get<T>(path: string): Promise<SdkResult<T>> { return this.request<T>(path) }
   async post<T>(path: string, body?: unknown): Promise<SdkResult<T>> {
