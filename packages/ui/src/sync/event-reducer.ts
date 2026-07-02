@@ -1,3 +1,4 @@
+import { mergeSessionDirectoryMetadata } from '@/stores/useGlobalSessionsStore'
 import type {
   Event,
   Message,

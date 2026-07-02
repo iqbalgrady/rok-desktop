@@ -54,6 +54,7 @@ export const resolveGlobalSessionDirectory = (session: Session): string | null =
   };
 
   return normalizePath(record.directory ?? null)
+    ?? normalizePath(record.location?.directory ?? null)
     ?? normalizePath(record.project?.worktree ?? null);
 };
 

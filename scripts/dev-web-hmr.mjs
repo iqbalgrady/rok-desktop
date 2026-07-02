@@ -114,6 +114,8 @@ clearViteCache();
 
 const api = run('api', 'bun', ['run', '--cwd', 'packages/web', 'dev:server:watch'], {
   ROK_DESKTOP_PORT: backendPort,
+  ROKCODE_DEV_MODE: 'true',
+  ROKCODE_SOURCE_DIR: process.env.ROKCODE_SOURCE_DIR || '/Users/iqbalfavian/rokcode/packages/rokcode',
 });
 const vite = run(
   'vite',

@@ -844,19 +844,25 @@ class OpencodeService {
 
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
+        // Set model on session before sending prompt (V2 requires switchModel)
+        if (params.providerID && params.modelID) {
+          try {
+            await this.client.session.switchModel({
+              sessionID: params.id,
+              ...(requestDirectory ? { directory: requestDirectory } : {}),
+              model: { id: params.modelID, providerID: params.providerID, ...(params.variant ? { variant: params.variant } : {}) },
+            });
+          } catch (e) { /* best-effort */ }
+        }
+        // V2 protocol: {prompt: {text, files?, agents?}, id?, delivery?}
+        // model/agent set via switchModel/switchAgent endpoints
+        const promptText = [params.prefaceText?.trim(), ...parts.filter(p => p?.type === 'text').map(p => p?.text || '')].filter(Boolean).join('\n');
         const result = await this.client.session.promptAsync({
           sessionID: params.id,
           ...(requestDirectory ? { directory: requestDirectory } : {}),
-          model: {
-            providerID: params.providerID,
-            modelID: params.modelID,
-          },
-          agent: params.agent,
-          variant: params.variant,
-          messageID: messageId,
+          id: messageId,
+          prompt: { text: promptText || params.text || '' },
           ...(params.delivery ? { delivery: params.delivery } : {}),
-          ...(params.format ? { format: params.format } : {}),
-          parts,
         });
         if (result.response instanceof Response) {
           response = result.response;

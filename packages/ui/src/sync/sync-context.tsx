@@ -1,3 +1,4 @@
+import { mergeSessionDirectoryMetadata } from '@/stores/useGlobalSessionsStore'
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useEffect, useRef, useCallback, useMemo } from "react"
 // Throttle stale resync to avoid reconnect storms
