@@ -242,6 +242,17 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
     let args = ['serve', '--hostname', hostname, '--port', String(port)];
     let launchWrapperType = null;
 
+    // Dev mode: use source code directly (same as terminal)
+    if (process.env.ROKCODE_DEV_MODE === 'true' || process.env.ROKCODE_DEV_MODE === '1') {
+      const rokcodeSourceDir = process.env.ROKCODE_SOURCE_DIR || '';
+      if (rokcodeSourceDir) {
+        binary = 'bun';
+        const devScript = "import { Server } from '" + rokcodeSourceDir + "/src/server/server.ts'; Server.listen({ hostname: '" + hostname + "', port: " + port + " }).then(s => console.log('rokcode server listening on http://' + s.hostname + ':' + s.port)).catch(e => process.stderr.write(String(e?.stack||e?.message||e) + String.fromCharCode(10)));";
+        args = ['-e', devScript];
+        console.log('[Rokcode] Dev mode: using source code from', rokcodeSourceDir);
+      }
+    }
+
     if (process.platform === 'win32' && state.useWslForOpencode) {
       throw new Error('Launching Rokcode through WSL is no longer supported. Install Rokcode natively on Windows and configure rokcode.cmd or rokcode.exe.');
     }
