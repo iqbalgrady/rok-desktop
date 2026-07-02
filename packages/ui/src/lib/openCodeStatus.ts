@@ -261,21 +261,21 @@ const buildOpenCodeStatusReport = async (): Promise<string> => {
   lines.push(`Time: ${now.toISOString()}`);
   lines.push(`Rok Desktop version: ${appVersion}`);
   lines.push(`Runtime: ${origin || '(unknown)'} (api=${apiBase || '(unknown)'})`);
-  lines.push(`OpenCode SDK base: ${opencodeClient.getBaseUrl()}`);
+  lines.push(`Rokcode SDK base: ${opencodeClient.getBaseUrl()}`);
   lines.push(`Event stream: ${eventStreamStatus}`);
   lines.push(`Directory: ${directory || '(none)'}`);
   lines.push(`Platform: ${platform}`);
 
   const runtimeOpenCodePort = normalizePort(rokDesktopHealth?.openCodePort);
-  lines.push(`OpenCode runtime port: ${runtimeOpenCodePort ?? '(unknown)'}`);
+  lines.push(`Rokcode runtime port: ${runtimeOpenCodePort ?? '(unknown)'}`);
   if (typeof rokDesktopHealth?.openCodeRunning === 'boolean') {
-    lines.push(`OpenCode runtime running: ${rokDesktopHealth.openCodeRunning ? 'yes' : 'no'}`);
+    lines.push(`Rokcode runtime running: ${rokDesktopHealth.openCodeRunning ? 'yes' : 'no'}`);
   }
   if (typeof rokDesktopHealth?.openCodeSecureConnection === 'boolean') {
-    lines.push(`Secure OpenCode connection: ${rokDesktopHealth.openCodeSecureConnection ? 'true' : 'false'}`);
+    lines.push(`Secure Rokcode connection: ${rokDesktopHealth.openCodeSecureConnection ? 'true' : 'false'}`);
   }
   if (typeof rokDesktopHealth?.openCodeAuthSource === 'string' && rokDesktopHealth.openCodeAuthSource.trim()) {
-    lines.push(`OpenCode auth source: ${rokDesktopHealth.openCodeAuthSource}`);
+    lines.push(`Rokcode auth source: ${rokDesktopHealth.openCodeAuthSource}`);
   }
 
   if (typeof window !== 'undefined') {
@@ -288,7 +288,7 @@ const buildOpenCodeStatusReport = async (): Promise<string> => {
   const isLikelyMac = /Mac OS X|Macintosh/.test(platform);
   if (isLikelyMac) {
     lines.push('');
-    lines.push('OpenCode CLI resolution:');
+    lines.push('Rokcode CLI resolution:');
 
     const launchDiagnostics = isRecord(rokDesktopHealth?.lastOpenCodeLaunchDiagnostics)
       ? rokDesktopHealth.lastOpenCodeLaunchDiagnostics
@@ -350,9 +350,9 @@ const buildOpenCodeStatusReport = async (): Promise<string> => {
 
     if (resolved) {
       const dir = resolvedDir || (resolved.includes('/') ? resolved.split('/').slice(0, -1).join('/') || '/' : '');
-      lines.push(`- opencode: ${resolved}${dir ? ` (dir=${dir})` : ''}`);
+      lines.push(`- rokcode: ${resolved}${dir ? ` (dir=${dir})` : ''}`);
     } else {
-      lines.push('- opencode: (n/a)');
+      lines.push('- rokcode: (n/a)');
     }
 
     lines.push(`- source: ${source || '(n/a)'}`);
@@ -381,7 +381,7 @@ const buildOpenCodeStatusReport = async (): Promise<string> => {
 
   lines.push('');
   if (probes.length) {
-    lines.push('OpenCode API probes:');
+    lines.push('Rokcode API probes:');
     for (const probe of probes) {
       if (!probe.result) {
         lines.push(`- ${probe.label}: (no url)`);
@@ -392,7 +392,7 @@ const buildOpenCodeStatusReport = async (): Promise<string> => {
       lines.push(`- ${probe.label}: ${ok ? 'ok' : 'fail'} status=${status} time=${elapsedMs}ms ${summary}${suffix}`);
     }
   } else {
-    lines.push('OpenCode API probes: (skipped)');
+    lines.push('Rokcode API probes: (skipped)');
   }
 
   lines.push('');

@@ -35,7 +35,7 @@ export const RokDesktopUpdateToast: React.FC = () => {
   const reloadOpenCode = React.useCallback(() => {
     toast.dismiss(UPGRADE_TOAST_ID);
     void reloadOpenCodeConfiguration({
-      message: t('opencodeUpdate.toast.reload.message'),
+      message: t('rokcodeUpdate.toast.reload.message'),
       mode: 'projects',
       scopes: ['all'],
     }).catch(() => undefined);
@@ -45,9 +45,9 @@ export const RokDesktopUpdateToast: React.FC = () => {
     if (upgradingRef.current) return;
     upgradingRef.current = true;
     toast.dismiss(UPDATE_TOAST_ID);
-    toast.message(t('opencodeUpdate.toast.upgrading.title'), {
+    toast.message(t('rokcodeUpdate.toast.upgrading.title'), {
       id: UPGRADE_TOAST_ID,
-      description: t('opencodeUpdate.toast.upgrading.description'),
+      description: t('rokcodeUpdate.toast.upgrading.description'),
       duration: Infinity,
       icon: <Icon name="refresh" className="h-4 w-4 animate-spin text-muted-foreground" />,
     });
@@ -63,25 +63,25 @@ export const RokDesktopUpdateToast: React.FC = () => {
       });
       const payload = await response.json().catch(() => null) as null | { success?: boolean; version?: string; error?: string };
       if (!response.ok || payload?.success === false) {
-        throw new Error(payload?.error || response.statusText || t('opencodeUpdate.toast.failed.description'));
+        throw new Error(payload?.error || response.statusText || t('rokcodeUpdate.toast.failed.description'));
       }
 
-      toast.success(t('opencodeUpdate.toast.updated.title'), {
+      toast.success(t('rokcodeUpdate.toast.updated.title'), {
         id: UPGRADE_TOAST_ID,
         description: payload?.version
-          ? t('opencodeUpdate.toast.updated.descriptionWithVersion', { version: payload.version })
-          : t('opencodeUpdate.toast.updated.description'),
+          ? t('rokcodeUpdate.toast.updated.descriptionWithVersion', { version: payload.version })
+          : t('rokcodeUpdate.toast.updated.description'),
         duration: Infinity,
         icon: <Icon name="check" className="h-4 w-4 text-[var(--status-success)]" />,
         action: {
-          label: t('opencodeUpdate.toast.actions.reload'),
+          label: t('rokcodeUpdate.toast.actions.reload'),
           onClick: reloadOpenCode,
         },
       });
     } catch (error) {
-      toast.error(t('opencodeUpdate.toast.failed.title'), {
+      toast.error(t('rokcodeUpdate.toast.failed.title'), {
         id: UPGRADE_TOAST_ID,
-        description: error instanceof Error ? error.message : t('opencodeUpdate.toast.failed.description'),
+        description: error instanceof Error ? error.message : t('rokcodeUpdate.toast.failed.description'),
         duration: Infinity,
       });
     } finally {
@@ -92,7 +92,7 @@ export const RokDesktopUpdateToast: React.FC = () => {
   React.useEffect(() => {
     const showUpdateAvailableToast = (version: string) => {
       // Upstream setting wins over our dedup logic: if user disabled
-      // OpenCode update notifications, dismiss any active toast and bail
+      // Rokcode update notifications, dismiss any active toast and bail
       // before consulting dedup state.
       if (!useUIStore.getState().showRokcodeUpdateNotifications) {
         toast.dismiss(UPDATE_TOAST_ID);
@@ -108,16 +108,16 @@ export const RokDesktopUpdateToast: React.FC = () => {
       }
       seenVersionsRef.current.add(version);
 
-      toast.info(t('opencodeUpdate.toast.available.title'), {
+      toast.info(t('rokcodeUpdate.toast.available.title'), {
         id: UPDATE_TOAST_ID,
-        description: t('opencodeUpdate.toast.available.description', { version }),
+        description: t('rokcodeUpdate.toast.available.description', { version }),
         duration: Infinity,
         action: {
-          label: t('opencodeUpdate.toast.actions.update'),
+          label: t('rokcodeUpdate.toast.actions.update'),
           onClick: runUpgrade,
         },
         cancel: {
-          label: t('opencodeUpdate.toast.actions.dismiss'),
+          label: t('rokcodeUpdate.toast.actions.dismiss'),
           onClick: () => {
             getDeferredSafeStorage().setItem(UPDATE_TOAST_DISMISSED_VERSION_KEY, version);
             void updateDesktopSettings({ openCodeUpdateToastDismissedVersion: version });
@@ -138,7 +138,7 @@ export const RokDesktopUpdateToast: React.FC = () => {
     const checkForUpdate = async (attempt: number) => {
       try {
         const response = await runtimeFetch('/api/opencode/upgrade-status', { headers: { Accept: 'application/json' } });
-        if (!response.ok) throw new Error(response.statusText || 'OpenCode upgrade status check failed');
+        if (!response.ok) throw new Error(response.statusText || 'Rokcode upgrade status check failed');
         const status = await response.json().catch(() => null) as RokcodeUpgradeStatusLike | null;
         const version = resolveRokcodeUpgradeStatusVersion(status);
         if (!cancelled && version) {

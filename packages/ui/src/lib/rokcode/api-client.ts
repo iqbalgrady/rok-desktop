@@ -67,7 +67,7 @@ class RokcodeHttpClient {
   async stream(path: string, init: RequestInit = {}): Promise<Response> {
     return this.fetch(this.url(path), {
       ...init,
-      headers: { ...this.headers, Accept: "text/event-stream", ...(init.headers as Record<string, string> || {}) },
+      headers: { ...this.buildHeaders(init.headers), Accept: "text/event-stream" },
     })
   }
 
@@ -119,7 +119,7 @@ export interface RokcodeClient {
     stage(input: { sessionID: string; directory?: string; messageID: string; files?: unknown[] }): Promise<SdkResult<void>>
     clear(input: { sessionID: string; directory?: string }): Promise<SdkResult<void>>
     commit(input: { sessionID: string; directory?: string }): Promise<SdkResult<void>>
-    status(input: { sessionID: string; directory?: string }): Promise<SdkResult<{ type: string }>>
+    status(input?: { sessionID?: string; directory?: string }): Promise<SdkResult<{ type: string }>>
     todo(input: { sessionID: string; directory?: string }): Promise<SdkResult<unknown>>
     summarize(input: { sessionID: string; directory?: string; providerID: string; modelID: string; auto?: boolean }): Promise<SdkResult<unknown>>
     command(input: { sessionID: string; directory?: string } & Record<string, unknown>): Promise<SdkResult<unknown>>
@@ -154,31 +154,32 @@ export interface RokcodeClient {
     set(input: { password: string; trustDevice?: boolean; issueClientToken?: boolean; clientLabel?: string; clientKind?: string; dedupeKey?: string }): Promise<SdkResult<unknown>>
   }
   project: {
-    current(): Promise<SdkResult<{ worktree?: string; sandboxes?: unknown[]; directory?: string; [key: string]: unknown }>>
+    current(input?: Record<string, unknown>): Promise<SdkResult<{ worktree?: string; sandboxes?: unknown[]; directory?: string; [key: string]: unknown }>>
     list(): Promise<SdkResult<unknown>>
   }
   file: {
-    read(input: { path: string }): Promise<SdkResult<unknown>>
-    list(input: { path: string }): Promise<SdkResult<unknown>>
+    read(input: { path: string; directory?: string }): Promise<SdkResult<unknown>>
+    list(input: { path: string; directory?: string }): Promise<SdkResult<unknown>>
     write(input: { path: string; content: string }): Promise<SdkResult<void>>
   }
   permission: {
-    list(): Promise<SdkResult<unknown>>
-    reply(input: { id: string; response: unknown }): Promise<SdkResult<void>>
+    list(input?: Record<string, unknown>): Promise<SdkResult<unknown>>
+    reply(input: { requestID: string; directory?: string; reply: unknown; message?: string }): Promise<SdkResult<void>>
   }
   question: {
-    list(): Promise<SdkResult<unknown>>
-    reply(input: { id: string; response: unknown }): Promise<SdkResult<void>>
-    reject(input: { id: string }): Promise<SdkResult<void>>
+    list(input?: Record<string, unknown>): Promise<SdkResult<unknown>>
+    reply(input: { requestID: string; directory?: string; answers: unknown }): Promise<SdkResult<void>>
+    reject(input: { requestID: string; directory?: string }): Promise<SdkResult<void>>
   }
-  tool: { ids(): Promise<SdkResult<string[]>> }
+  tool: { ids(input?: Record<string, unknown>): Promise<SdkResult<string[]>> }
   mcp: { status(): Promise<SdkResult<unknown>> }
-  command: { list(): Promise<SdkResult<unknown>> }
+  command: { list(input?: Record<string, unknown>): Promise<SdkResult<unknown>> }
   vcs: { get(): Promise<SdkResult<unknown>> }
-  app: { agents(input?: Record<string, unknown>): Promise<SdkResult<unknown>> }
+  app: { agents(input?: Record<string, unknown>): Promise<SdkResult<unknown>>; skills(input?: Record<string, unknown>): Promise<SdkResult<unknown>> }
   lsp: { status(): Promise<SdkResult<unknown>> }
-  path: { get(): Promise<SdkResult<{ home: string; worktree?: string; directory?: string; [key: string]: unknown }>> }
+  path: { get(input?: Record<string, unknown>): Promise<SdkResult<{ home: string; worktree?: string; directory?: string; [key: string]: unknown }>> }
   experimental: { session: { list(input?: any): Promise<SdkResult<any[]>> } }
+  find: { files(input: { query: string; limit?: number; dirs?: string; type?: string }): Promise<SdkResult<unknown>> }
 }
 
 // --- SSE stream helper ---
@@ -192,12 +193,12 @@ async function* sseStream(response: Response): AsyncIterable<SseEvent> {
       const { done, value } = await reader.read()
       if (done) break
       buffer += decoder.decode(value, { stream: true })
-      const lines = buffer.split("\n")
+      const lines = buffer.split(/\r?\n/)
       buffer = lines.pop() || ""
       for (const line of lines) {
         if (line.startsWith("id:")) currentId = line.slice(3).trim()
         else if (line.startsWith("event:")) currentType = line.slice(6).trim()
-        else if (line.startsWith("data:")) currentData += (currentData ? "\n" : "") + line.slice(5).trim()
+        else if (line.startsWith("data:")) currentData += (currentData ? "\n" : "") + line.slice(5).replace(/^ /, "")
         else if (line === "" && currentData) {
           try { yield { id: currentId || undefined, type: currentType || "message", data: JSON.parse(currentData) } } catch {}
           currentId = ""; currentType = ""; currentData = ""
@@ -216,7 +217,7 @@ function sid(input?: unknown): string {
     if (typeof obj.sessionID === "string") return obj.sessionID
     if (typeof obj.id === "string") return obj.id
   }
-  return String(input)
+  return ""
 }
 
 // Helper: extract directory from input object (if present) and return query string for it
@@ -239,7 +240,7 @@ export function createRokcodeClient(options: RokcodeClientOptions): RokcodeClien
       context: (input) => http.get(`${API_PREFIX}/session/${sid(input)}/context${buildQuery(input)}`),
       interrupt: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/interrupt${buildQuery(input)}`),
       active: () => http.get<Record<string, { type: string }>>(`${API_PREFIX}/session/active`),
-      status: (input) => http.get<{ type: string }>(`${API_PREFIX}/session/${sid(input)}/status${buildQuery(input)}`),
+      status: (input) => http.get<{ type: string }>(`${API_PREFIX}/session/status${buildQuery(input)}`),
       stage: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/revert/stage${buildQuery(input)}`, input),
       clear: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/revert/clear${buildQuery(input)}`),
       commit: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/revert/commit${buildQuery(input)}`),
@@ -282,30 +283,31 @@ export function createRokcodeClient(options: RokcodeClientOptions): RokcodeClien
       set: (input) => http.post(`/auth/session`, input),
     },
     project: {
-      current: () => http.get(`${API_PREFIX}/project/current`),
+      current: (input?) => http.get(`${API_PREFIX}/project/current${buildQuery(input)}`),
       list: () => http.get(`${API_PREFIX}/project/list`),
     },
     file: {
-      read: (input) => http.get(`${API_PREFIX}/file?path=${encodeURIComponent(input.path)}`),
-      list: (input) => http.get(`${API_PREFIX}/file/list?path=${encodeURIComponent(input.path)}`),
+      read: (input) => http.get(`${API_PREFIX}/file${buildQuery(input)}`),
+      list: (input) => http.get(`${API_PREFIX}/file/list${buildQuery(input)}`),
       write: (input) => http.post<void>(`${API_PREFIX}/file`, input),
     },
     permission: {
-      list: () => http.get(`${API_PREFIX}/permission`),
-      reply: (input) => http.post<void>(`${API_PREFIX}/permission/${input.id}`, input.response),
+      list: (input?) => http.get(`${API_PREFIX}/permission${buildQuery(input)}`),
+      reply: (input) => http.post<void>(`${API_PREFIX}/permission/${input.requestID}/reply${buildQuery(input)}`, { reply: input.reply, ...(input.message ? { message: input.message } : {}) }),
     },
     question: {
-      list: () => http.get(`${API_PREFIX}/question`),
-      reply: (input) => http.post<void>(`${API_PREFIX}/question/${input.id}`, input.response),
-      reject: (input) => http.post<void>(`${API_PREFIX}/question/${input.id}/reject`),
+      list: (input?) => http.get(`${API_PREFIX}/question${buildQuery(input)}`),
+      reply: (input) => http.post<void>(`${API_PREFIX}/question/${input.requestID}/reply${buildQuery(input)}`, { answers: input.answers }),
+      reject: (input) => http.post<void>(`${API_PREFIX}/question/${input.requestID}/reject${buildQuery(input)}`),
     },
-    tool: { ids: () => http.get<string[]>(`${API_PREFIX}/tool/ids`) },
+    tool: { ids: (input?) => http.get<string[]>(`${API_PREFIX}/tool/ids${buildQuery(input)}`) },
     mcp: { status: () => http.get(`${API_PREFIX}/mcp/status`) },
-    command: { list: () => http.get(`${API_PREFIX}/command/list`) },
+    command: { list: (input?) => http.get(`${API_PREFIX}/command/list${buildQuery(input)}`) },
     vcs: { get: () => http.get(`${API_PREFIX}/vcs`) },
-    app: { agents: (input?) => http.get(`${API_PREFIX}/agent${buildQuery(input)}`) },
+    app: { agents: (input?) => http.get(`${API_PREFIX}/agent${buildQuery(input)}`), skills: (input?) => http.get(`${API_PREFIX}/skill${buildQuery(input)}`) },
     lsp: { status: () => http.get(`${API_PREFIX}/lsp/status`) },
-    path: { get: () => http.get<{ home: string; worktree?: string; directory?: string; [key: string]: unknown }>(`${API_PREFIX}/path`) },
+    path: { get: (input?) => http.get<{ home: string; worktree?: string; directory?: string; [key: string]: unknown }>(`${API_PREFIX}/path${buildQuery(input)}`) },
+    find: { files: (input) => http.get(`${API_PREFIX}/find/file${buildQuery(input)}`) },
     experimental: { session: { list: (input: any) => http.get<any[]>(`${API_PREFIX}/session${buildQuery(input)}`) } },
   } satisfies RokcodeClient
 }

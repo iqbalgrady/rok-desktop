@@ -243,14 +243,14 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
     let launchWrapperType = null;
 
     if (process.platform === 'win32' && state.useWslForOpencode) {
-      throw new Error('Launching OpenCode through WSL is no longer supported. Install OpenCode natively on Windows and configure opencode.cmd or opencode.exe.');
+      throw new Error('Launching Rokcode through WSL is no longer supported. Install Rokcode natively on Windows and configure rokcode.cmd or rokcode.exe.');
     }
 
     if (process.platform === 'win32' && !state.useWslForOpencode) {
       const launchSpec = resolveManagedOpenCodeLaunchSpec(binary);
       if (launchSpec?.binary) {
         if (launchSpec.wrapperType) {
-          console.log(`Launching OpenCode via ${launchSpec.wrapperType}: ${launchSpec.binary}`);
+          console.log(`Launching Rokcode via ${launchSpec.wrapperType}: ${launchSpec.binary}`);
         }
         launchWrapperType = launchSpec.wrapperType || null;
         binary = launchSpec.binary;
@@ -321,7 +321,7 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
         const appBundleHint = process.platform === 'darwin' && /\/OpenCode\.app\/Contents\/MacOS\/(?:OpenCode|opencode-cli)$/i.test(binary)
           ? ' The configured binary appears to point at the macOS desktop app bundle; Rok Desktop needs the standalone opencode CLI.'
           : '';
-        finish(reject, new Error(`OpenCode process exited before serving with ${reason}. Binary used: ${binary}.${appBundleHint} ${formatCapturedOutput({ stdout, stderr })}`));
+        finish(reject, new Error(`Rokcode process exited before serving with ${reason}. Binary used: ${binary}.${appBundleHint} ${formatCapturedOutput({ stdout, stderr })}`));
       };
 
       const onError = (error) => {
@@ -329,7 +329,7 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
       };
 
       const timer = setTimeout(() => {
-        finish(reject, new Error(`Timeout waiting for OpenCode to start after ${timeout}ms`));
+        finish(reject, new Error(`Timeout waiting for Rokcode to start after ${timeout}ms`));
       }, timeout);
 
       child.stdout?.on('data', onStdout);
@@ -455,7 +455,7 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
       }
     }
 
-    throw new Error('Timed out waiting for OpenCode port');
+    throw new Error('Timed out waiting for Rokcode port');
   };
 
   const START_OPEN_CODE_MAX_ATTEMPTS = 2;
@@ -499,7 +499,7 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
       });
 
       if (!serverInstance || !serverInstance.url) {
-        throw new Error('OpenCode server started but URL is missing');
+        throw new Error('Rokcode server started but URL is missing');
       }
 
       const url = new URL(serverInstance.url);
@@ -570,22 +570,22 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
       state.isRestartingOpenCode = true;
       state.isOpenCodeReady = false;
       state.openCodeNotReadySince = Date.now();
-      console.log('Restarting OpenCode process...');
+      console.log('Restarting Rokcode process...');
 
       if (state.isExternalOpenCode) {
-        console.log('Re-probing external OpenCode server...');
+        console.log('Re-probing external Rokcode server...');
         const probePort = state.openCodePort || env.ENV_CONFIGURED_OPENCODE_PORT || 4096;
         const probeOrigin = state.openCodeBaseUrl ?? env.ENV_CONFIGURED_OPENCODE_HOST?.origin;
         const healthy = await probeExternalOpenCode(probePort, probeOrigin);
         if (healthy) {
-          console.log(`External OpenCode server on port ${probePort} is healthy`);
+          console.log(`External Rokcode server on port ${probePort} is healthy`);
           setOpenCodePort(probePort);
           state.isOpenCodeReady = true;
           state.lastOpenCodeError = null;
           state.openCodeNotReadySince = 0;
           syncToHmrState();
         } else {
-          state.lastOpenCodeError = `External OpenCode server on port ${probePort} is not responding`;
+          state.lastOpenCodeError = `External Rokcode server on port ${probePort} is not responding`;
           console.error(state.lastOpenCodeError);
           throw new Error(state.lastOpenCodeError);
         }
@@ -600,11 +600,11 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
       const portToKill = state.openCodePort;
 
       if (state.openCodeProcess) {
-        console.log('Stopping existing OpenCode process...');
+        console.log('Stopping existing Rokcode process...');
         try {
           await state.openCodeProcess.close();
         } catch (error) {
-          console.warn('Error closing OpenCode process:', error);
+          console.warn('Error closing Rokcode process:', error);
         }
         state.openCodeProcess = null;
         syncToHmrState();
@@ -612,7 +612,7 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
 
       killProcessOnPort(portToKill);
       if (!(await waitForPortRelease(portToKill, 5000))) {
-        console.warn(`Timed out waiting for OpenCode port ${portToKill} to be released`);
+        console.warn(`Timed out waiting for Rokcode port ${portToKill} to be released`);
       }
 
       if (env.ENV_CONFIGURED_OPENCODE_PORT) {
@@ -660,7 +660,7 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
 
   const waitForOpenCodeReady = async (timeoutMs = 20000, intervalMs = 400) => {
     if (!state.openCodePort) {
-      throw new Error('OpenCode port is not available');
+      throw new Error('Rokcode port is not available');
     }
 
     const deadline = Date.now() + timeoutMs;
@@ -680,14 +680,14 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
         timeout = null;
 
         if (!response.ok) {
-          lastError = new Error(`OpenCode health endpoint responded with status ${response.status}`);
+          lastError = new Error(`Rokcode health endpoint responded with status ${response.status}`);
           await new Promise((resolve) => setTimeout(resolve, intervalMs));
           continue;
         }
 
         const body = await response.json().catch(() => null);
         if (body?.healthy !== true) {
-          lastError = new Error('OpenCode health endpoint returned unhealthy response');
+          lastError = new Error('Rokcode health endpoint returned unhealthy response');
           await new Promise((resolve) => setTimeout(resolve, intervalMs));
           continue;
         }
@@ -711,14 +711,14 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
       throw lastError;
     }
 
-    const timeoutError = new Error('Timed out waiting for OpenCode to become ready');
+    const timeoutError = new Error('Timed out waiting for Rokcode to become ready');
     state.lastOpenCodeError = timeoutError.message;
     throw timeoutError;
   };
 
   const waitForAgentPresence = async (agentName, timeoutMs = 15000, intervalMs = 300) => {
     if (!state.openCodePort) {
-      throw new Error('OpenCode port is not available');
+      throw new Error('Rokcode port is not available');
     }
 
     const deadline = Date.now() + timeoutMs;
@@ -741,7 +741,7 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
       await new Promise((resolve) => setTimeout(resolve, intervalMs));
     }
 
-    throw new Error(`Agent "${agentName}" not available after OpenCode restart`);
+    throw new Error(`Agent "${agentName}" not available after Rokcode restart`);
   };
 
   const refreshOpenCodeAfterConfigChange = async (reason, options = {}) => {
@@ -753,8 +753,8 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
 
     await restartOpenCode();
 
-    // A managed OpenCode process is restarted (and thus re-reads config from
-    // disk) by restartOpenCode(). An external OpenCode server is NOT owned by
+    // A managed Rokcode process is restarted (and thus re-reads config from
+    // disk) by restartOpenCode(). An external Rokcode server is NOT owned by
     // Rok Desktop: restartOpenCode() only re-probes its health, so the freshly
     // written config is on disk but the running server keeps serving its old,
     // startup-cached config until the user restarts it themselves. Report this
@@ -786,22 +786,22 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
 
   const bootstrapOpenCodeAtStartup = async () => {
     try {
-      // Before doing anything, reap any OpenCode process WE spawned in a prior
+      // Before doing anything, reap any Rokcode process WE spawned in a prior
       // run that was orphaned by a crash/hard-exit. Verified + scoped to our own
       // pids, so it never touches a live instance's or the user's own server.
       try {
         const { reaped } = await reapOrphanedProcesses({ log: (msg) => console.log(msg) });
-        if (reaped > 0) console.log(`[lifecycle] startup reaped ${reaped} orphaned OpenCode process(es)`);
+        if (reaped > 0) console.log(`[lifecycle] startup reaped ${reaped} orphaned Rokcode process(es)`);
       } catch (error) {
         console.warn('[lifecycle] orphan reap failed:', error?.message ?? error);
       }
 
       syncFromHmrState();
       if (await isOpenCodeProcessHealthy()) {
-        console.log(`[HMR] Reusing existing OpenCode process on port ${state.openCodePort}`);
+        console.log(`[HMR] Reusing existing Rokcode process on port ${state.openCodePort}`);
       } else if (env.ENV_SKIP_OPENCODE_START && env.ENV_EFFECTIVE_PORT) {
         const label = env.ENV_CONFIGURED_OPENCODE_HOST ? env.ENV_CONFIGURED_OPENCODE_HOST.origin : `http://localhost:${env.ENV_EFFECTIVE_PORT}`;
-        console.log(`Using external OpenCode server at ${label} (skip-start mode)`);
+        console.log(`Using external Rokcode server at ${label} (skip-start mode)`);
         state.openCodeBaseUrl = env.ENV_CONFIGURED_OPENCODE_HOST?.origin ?? null;
         setOpenCodePort(env.ENV_EFFECTIVE_PORT);
         state.isOpenCodeReady = true;
@@ -811,7 +811,7 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
         syncToHmrState();
       } else if (env.ENV_EFFECTIVE_PORT && await probeExternalOpenCode(env.ENV_EFFECTIVE_PORT, env.ENV_CONFIGURED_OPENCODE_HOST?.origin)) {
         const label = env.ENV_CONFIGURED_OPENCODE_HOST ? env.ENV_CONFIGURED_OPENCODE_HOST.origin : `http://localhost:${env.ENV_EFFECTIVE_PORT}`;
-        console.log(`Auto-detected existing OpenCode server at ${label}`);
+        console.log(`Auto-detected existing Rokcode server at ${label}`);
         state.openCodeBaseUrl = env.ENV_CONFIGURED_OPENCODE_HOST?.origin ?? null;
         setOpenCodePort(env.ENV_EFFECTIVE_PORT);
         state.isOpenCodeReady = true;
@@ -930,7 +930,7 @@ export const createOpenCodeLifecycleRuntime = (deps) => {
       const healthy = await probeOpenCodeHealth();
       if (!healthy) {
         if (!isManagedOpenCodeProcessAlive()) {
-          console.log(`[lifecycle] ${source} health check: OpenCode process exited, restarting...`);
+          console.log(`[lifecycle] ${source} health check: Rokcode process exited, restarting...`);
           consecutiveHealthFailures = 0;
           lastHealthProbeResult = null;
           await restartOpenCode();

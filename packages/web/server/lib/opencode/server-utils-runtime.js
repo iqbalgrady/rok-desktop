@@ -59,7 +59,7 @@ export const createServerUtilsRuntime = (dependencies) => {
       }
     }
 
-    throw new Error('Timed out waiting for OpenCode port');
+    throw new Error('Timed out waiting for Rokcode port');
   };
 
   const getEnvValue = (name) => {
@@ -178,7 +178,7 @@ export const createServerUtilsRuntime = (dependencies) => {
 
   const fetchArraySnapshot = async (route, invalidMessage) => {
     if (!getOpenCodePort()) {
-      throw new Error('OpenCode port is not available');
+      throw new Error('Rokcode port is not available');
     }
 
     const response = await fetch(buildOpenCodeUrl(route), {

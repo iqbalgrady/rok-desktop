@@ -137,8 +137,8 @@ export function createGlobalMessageStreamWsBridge({
       }
 
       closeClientsWithInitialError({
-        message: status.buildUrlFailed ? 'OpenCode service unavailable' : 'Failed to connect to OpenCode event stream',
-        closeReason: status.buildUrlFailed ? 'OpenCode service unavailable' : 'Failed to connect to OpenCode event stream',
+        message: status.buildUrlFailed ? 'Rokcode service unavailable' : 'Failed to connect to OpenCode event stream',
+        closeReason: status.buildUrlFailed ? 'Rokcode service unavailable' : 'Failed to connect to OpenCode event stream',
         triggerHealthCheckFor: !status.buildUrlFailed,
       });
       return;

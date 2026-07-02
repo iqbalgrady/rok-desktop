@@ -90,7 +90,7 @@ export async function bootstrapGlobal(
     console.error("[bootstrap] global bootstrap failed", errors[0])
   }
 
-  // If ALL requests failed, OpenCode is likely down — fetch the Rok Desktop
+  // If ALL requests failed, Rokcode is likely down — fetch the Rok Desktop
   // health endpoint (outside the readiness gate) to get the actual error reason.
   if (errors.length === results.length) {
     let message = errors[0] instanceof Error ? errors[0].message : String(errors[0])
@@ -101,7 +101,7 @@ export async function bootstrapGlobal(
         if (health.lastOpenCodeError) {
           message = health.lastOpenCodeError
         } else if (!health.openCodeRunning) {
-          message = "OpenCode process is not running"
+          message = "Rokcode process is not running"
         }
       }
     } catch {
@@ -170,7 +170,7 @@ export async function bootstrapDirectory(input: {
     .filter((r): r is PromiseRejectedResult => r.status === "rejected")
     .map((r) => r.reason)
 
-  // De-block the UI: only a total failure (OpenCode genuinely unreachable)
+  // De-block the UI: only a total failure (Rokcode genuinely unreachable)
   // should abort the directory. Don't let one transient initial fetch strand
   // the directory in "loading" forever and skip phase 2/3 (sessions).
   //   - session.status is LIVE data the event pipeline keeps current — a failed

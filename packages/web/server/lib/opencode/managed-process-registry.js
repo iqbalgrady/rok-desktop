@@ -1,6 +1,6 @@
-// Managed OpenCode process registry + orphan reaper.
+// Managed Rokcode process registry + orphan reaper.
 //
-// Rok Desktop spawns the OpenCode server as an EXTERNAL child binary (on Unix
+// Rok Desktop spawns the Rokcode server as an EXTERNAL child binary (on Unix
 // with `detached: true`, so it leads its own process group). That binary can
 // therefore outlive its parent if the parent is hard-killed/crashes/`Ctrl+C`ed
 // before graceful teardown runs — leaving an orphaned `opencode serve` that
@@ -87,7 +87,7 @@ const readAllEntries = () => {
   return out;
 };
 
-/** Record an OpenCode process WE spawned so a future run can reap it if orphaned. */
+/** Record an Rokcode process WE spawned so a future run can reap it if orphaned. */
 export const registerManagedProcess = ({ pid, ownerPid, port, binary, runtime } = {}) => {
   if (!Number.isInteger(pid)) return;
   writeEntryFile({
@@ -222,7 +222,7 @@ const processEntry = async (entry, { log }) => {
 };
 
 /**
- * Kill any genuinely-orphaned OpenCode processes WE previously spawned, and
+ * Kill any genuinely-orphaned Rokcode processes WE previously spawned, and
  * prune their registry files. Safe to call at startup before spawning a new
  * server. Returns { inspected, reaped }.
  */

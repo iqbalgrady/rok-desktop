@@ -9,8 +9,8 @@ import { restartDesktopApp } from '@/lib/desktop';
 import { useI18n } from '@/lib/i18n';
 import { runtimeFetch } from '@/lib/runtime-fetch';
 
-const INSTALL_COMMAND = 'curl -fsSL https://opencode.ai/install | bash';
-const DOCS_URL = 'https://opencode.ai/docs';
+const INSTALL_COMMAND = 'curl -fsSL https://rokcode.ai/install | bash';
+const DOCS_URL = 'https://rokcode.ai/docs';
 
 type OnboardingPlatform = 'macos' | 'linux' | 'windows' | 'unknown';
 
@@ -204,10 +204,10 @@ export function LocalSetupScreen({
   const docsUrl = DOCS_URL;
   const binaryPlaceholder =
     platform === 'windows'
-      ? 'C:\\Users\\you\\AppData\\Roaming\\npm\\opencode.cmd'
+      ? 'C:\\Users\\you\\AppData\\Roaming\\npm\\rokcode.cmd'
       : platform === 'linux'
-        ? '/home/you/.bun/bin/opencode'
-        : '/Users/you/.bun/bin/opencode';
+        ? '/home/you/.bun/bin/rokcode'
+        : '/Users/you/.bun/bin/rokcode';
 
   return (
     <div

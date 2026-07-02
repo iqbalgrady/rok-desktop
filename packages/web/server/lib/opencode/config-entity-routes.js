@@ -27,7 +27,7 @@ export const registerConfigEntityRoutes = (app, dependencies) => {
   } = dependencies;
 
   // Build the response for a config mutation based on whether OpenCode actually
-  // reloaded the change. When connected to an external OpenCode server that
+  // reloaded the change. When connected to an external Rokcode server that
   // Rok Desktop cannot restart, the change is persisted to disk but the running
   // server will not serve it until the user restarts that server. We must not
   // report a clean "reloading" success in that case, otherwise the UI silently
@@ -134,7 +134,7 @@ export const registerConfigEntityRoutes = (app, dependencies) => {
 
       res.json(buildConfigMutationResponse(refreshResult, {
         liveMessage: `Agent ${agentName} created successfully. Reloading interface…`,
-        manualRestartMessage: `Agent ${agentName} saved. Restart your connected OpenCode server to apply the change.`,
+        manualRestartMessage: `Agent ${agentName} saved. Restart your connected Rokcode server to apply the change.`,
       }));
     } catch (error) {
       console.error('Failed to create agent:', error);
@@ -162,7 +162,7 @@ export const registerConfigEntityRoutes = (app, dependencies) => {
 
       res.json(buildConfigMutationResponse(refreshResult, {
         liveMessage: `Agent ${agentName} updated successfully. Reloading interface…`,
-        manualRestartMessage: `Agent ${agentName} saved. Restart your connected OpenCode server to apply the change.`,
+        manualRestartMessage: `Agent ${agentName} saved. Restart your connected Rokcode server to apply the change.`,
       }));
     } catch (error) {
       console.error('[Server] Failed to update agent:', error);
@@ -185,7 +185,7 @@ export const registerConfigEntityRoutes = (app, dependencies) => {
 
       res.json(buildConfigMutationResponse(refreshResult, {
         liveMessage: `Agent ${agentName} deleted successfully. Reloading interface…`,
-        manualRestartMessage: `Agent ${agentName} deleted. Restart your connected OpenCode server to apply the change.`,
+        manualRestartMessage: `Agent ${agentName} deleted. Restart your connected Rokcode server to apply the change.`,
       }));
     } catch (error) {
       console.error('Failed to delete agent:', error);

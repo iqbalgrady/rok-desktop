@@ -458,7 +458,7 @@ const projectConfigRuntime = createProjectConfigRuntime({
 });
 
 // HMR-persistent state via globalThis
-// These values survive Vite HMR reloads to prevent zombie OpenCode processes
+// These values survive Vite HMR reloads to prevent zombie Rokcode processes
 const hmrStateRuntime = createHmrStateRuntime({
   globalThisLike: globalThis,
   os,

@@ -129,8 +129,8 @@ export const registerOpenCodeRoutes = (app, dependencies) => {
       const resolution = await getOpenCodeResolutionSnapshot(settings);
       res.json(resolution);
     } catch (error) {
-      console.error('Failed to resolve OpenCode binary:', error);
-      res.status(500).json({ error: 'Failed to resolve OpenCode binary' });
+      console.error('Failed to resolve Rokcode binary:', error);
+      res.status(500).json({ error: 'Failed to resolve Rokcode binary' });
     }
   });
 
@@ -152,7 +152,7 @@ export const registerOpenCodeRoutes = (app, dependencies) => {
       if (!response.ok) {
         return res.status(response.status).json({
           success: false,
-          error: payload?.error || response.statusText || 'Failed to upgrade OpenCode',
+          error: payload?.error || response.statusText || 'Failed to upgrade Rokcode',
         });
       }
 
@@ -164,7 +164,7 @@ export const registerOpenCodeRoutes = (app, dependencies) => {
           upgraded: true,
           error: restartError instanceof Error
             ? `OpenCode upgraded, but restart failed: ${restartError.message}`
-            : 'OpenCode upgraded, but restart failed',
+            : 'Rokcode upgraded, but restart failed',
         });
       }
 
@@ -173,7 +173,7 @@ export const registerOpenCodeRoutes = (app, dependencies) => {
       console.error('Failed to upgrade OpenCode:', error);
       return res.status(500).json({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to upgrade OpenCode',
+        error: error instanceof Error ? error.message : 'Failed to upgrade Rokcode',
       });
     }
   });
@@ -222,14 +222,14 @@ export const registerOpenCodeRoutes = (app, dependencies) => {
       if (!healthResponse.ok) {
         return res.status(healthResponse.status).json({
           healthy: false,
-          error: health?.error || healthResponse.statusText || 'OpenCode health check failed',
+          error: health?.error || healthResponse.statusText || 'Rokcode health check failed',
         });
       }
       return res.json({ healthy: health?.healthy === true });
     } catch (error) {
       return res.status(503).json({
         healthy: false,
-        error: error instanceof Error ? error.message : 'OpenCode health check failed',
+        error: error instanceof Error ? error.message : 'Rokcode health check failed',
       });
     }
   });

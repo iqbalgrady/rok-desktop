@@ -194,9 +194,9 @@ export const registerOpenCodeProxy = (app, deps) => {
 
   const runtime = getRuntime();
   if (runtime.openCodePort) {
-    console.log(`Setting up proxy to OpenCode on port ${runtime.openCodePort}`);
+    console.log(`Setting up proxy to Rokcode on port ${runtime.openCodePort}`);
   } else {
-    console.log('Setting up OpenCode API gate (OpenCode not started yet)');
+    console.log('Setting up Rokcode API gate (Rokcode not started yet)');
   }
   app.set('opencodeProxyConfigured', true);
 
@@ -411,7 +411,7 @@ export const registerOpenCodeProxy = (app, deps) => {
       }
       console.error('[proxy] OpenCode SSE proxy error:', error?.message ?? error);
       if (!res.headersSent) {
-        res.status(503).json({ error: 'OpenCode service unavailable' });
+        res.status(503).json({ error: 'Rokcode service unavailable' });
       } else {
         res.end();
       }
@@ -502,7 +502,7 @@ export const registerOpenCodeProxy = (app, deps) => {
       }
       console.error(`[proxy] OpenCode ${logLabel} proxy error:`, error?.message ?? error);
       if (!res.headersSent) {
-        res.status(503).json({ error: 'OpenCode service unavailable' });
+        res.status(503).json({ error: 'Rokcode service unavailable' });
         return;
       }
       next(error);
@@ -519,7 +519,7 @@ export const registerOpenCodeProxy = (app, deps) => {
   // poll readiness instead of returning 503 immediately. A bare 503 pushes the
   // client into an exponential-backoff retry loop (500ms → 1s → …) that wastes
   // seconds of cold-start time and can fail bootstrap outright. Holding the
-  // request until OpenCode is ready (typically well under a second) lets the
+  // request until Rokcode is ready (typically well under a second) lets the
   // first call simply succeed. We still 503 if readiness doesn't arrive within a
   // bounded window so genuinely-down servers fail fast.
   const READINESS_HOLD_POLL_MS = 75;
@@ -564,7 +564,7 @@ export const registerOpenCodeProxy = (app, deps) => {
 
     if (!res.headersSent) {
       res.status(503).json({
-        error: 'OpenCode is restarting',
+        error: 'Rokcode is restarting',
         restarting: true,
       });
     }
@@ -632,13 +632,13 @@ export const registerOpenCodeProxy = (app, deps) => {
         }
 
         if (!globalSessions && successfulProjectReads === 0) {
-          return res.status(504).json({ error: 'OpenCode session list timed out' });
+          return res.status(504).json({ error: 'Rokcode session list timed out' });
         }
 
         const merged = [...(globalSessions || []), ...extraSessions];
         merged.sort((a, b) => {
-          const aTime = a && typeof a.time_updated === 'number' ? a.time_updated : 0;
-          const bTime = b && typeof b.time_updated === 'number' ? b.time_updated : 0;
+          const aTime = a && typeof a.time?.updated === 'number' ? a.time.updated : 0;
+          const bTime = b && typeof b.time?.updated === 'number' ? b.time.updated : 0;
           return bTime - aTime;
         });
         console.log(`[SessionMerge] ${globalSessions?.length || 0} global + ${extraSessions.length} extra = ${merged.length} total`);
@@ -700,7 +700,7 @@ export const registerOpenCodeProxy = (app, deps) => {
       error: (err, _req, res) => {
         console.error('[proxy] OpenCode proxy error:', err.message);
         if (res && !res.headersSent && typeof res.status === 'function') {
-          res.status(503).json({ error: 'OpenCode service unavailable' });
+          res.status(503).json({ error: 'Rokcode service unavailable' });
         }
       },
     },

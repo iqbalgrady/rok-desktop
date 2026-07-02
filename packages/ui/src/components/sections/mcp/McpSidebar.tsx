@@ -361,7 +361,7 @@ export const McpSidebar: React.FC<McpSidebarProps> = ({ onItemSelect }) => {
               <DialogTitle>{t('settings.mcp.sidebar.deleteDialog.title')}</DialogTitle>
               <DialogDescription>
                 {t('settings.mcp.sidebar.deleteDialog.descriptionPrefix', { name: deleteTarget?.name || '' })}{' '}
-                <code className="text-foreground">opencode.json</code>.
+                <code className="text-foreground">rokcode.json</code>.
               </DialogDescription>
             </DialogHeader>
           <DialogFooter>

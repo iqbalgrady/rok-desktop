@@ -73,18 +73,18 @@ export const createGracefulShutdownRuntime = (dependencies) => {
       const openCodeProcess = getOpenCodeProcess();
 
       if (openCodeProcess) {
-        console.log('Stopping OpenCode process...');
+        console.log('Stopping Rokcode process...');
         try {
           await openCodeProcess.close();
         } catch (error) {
-          console.warn('Error closing OpenCode process:', error);
+          console.warn('Error closing Rokcode process:', error);
         }
         setOpenCodeProcess(null);
       }
 
       killProcessOnPort(portToKill);
       if (!(await waitForPortRelease(portToKill, 5000))) {
-        console.warn(`Timed out waiting for OpenCode port ${portToKill} to be released during shutdown`);
+        console.warn(`Timed out waiting for Rokcode port ${portToKill} to be released during shutdown`);
       }
     } else {
       console.log('Skipping OpenCode shutdown (external server)');

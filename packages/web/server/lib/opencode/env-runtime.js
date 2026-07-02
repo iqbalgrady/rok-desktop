@@ -830,13 +830,13 @@ export const createOpenCodeEnvRuntime = (deps) => {
     const messageSuffix = 'Rok Desktop needs the standalone opencode CLI. Install it and set settings.opencodeBinary to the CLI path, for example ~/.opencode/bin/opencode, or leave the setting empty to use PATH lookup.';
     const error = (() => {
       if (isMacOpenCodeAppBundlePath(candidate) || isMacOpenCodeAppBundlePath(configured)) {
-        return new Error(`Configured OpenCode binary points at the macOS desktop app bundle, not the CLI: ${candidate}. ${messageSuffix}`);
+        return new Error(`Configured Rokcode binary points at the macOS desktop app bundle, not the CLI: ${candidate}. ${messageSuffix}`);
       }
 
       try {
         const configuredStat = fs.statSync(configured);
         if (configuredStat.isDirectory()) {
-          return new Error(`Configured OpenCode binary directory does not contain an executable ${process.platform === 'win32' ? 'opencode.exe' : 'opencode'}: ${configured}. ${messageSuffix}`);
+          return new Error(`Configured Rokcode binary directory does not contain an executable ${process.platform === 'win32' ? 'opencode.exe' : 'opencode'}: ${configured}. ${messageSuffix}`);
         }
       } catch {
       }
@@ -844,14 +844,14 @@ export const createOpenCodeEnvRuntime = (deps) => {
       try {
         const stat = fs.statSync(candidate);
         if (stat.isDirectory()) {
-          return new Error(`Configured OpenCode binary directory does not contain an executable ${process.platform === 'win32' ? 'opencode.exe' : 'opencode'}: ${candidate}. ${messageSuffix}`);
+          return new Error(`Configured Rokcode binary directory does not contain an executable ${process.platform === 'win32' ? 'opencode.exe' : 'opencode'}: ${candidate}. ${messageSuffix}`);
         }
         if (!stat.isFile()) {
-          return new Error(`Configured OpenCode binary is not a file: ${candidate}. ${messageSuffix}`);
+          return new Error(`Configured Rokcode binary is not a file: ${candidate}. ${messageSuffix}`);
         }
-        return new Error(`Configured OpenCode binary is not executable: ${candidate}. ${messageSuffix}`);
+        return new Error(`Configured Rokcode binary is not executable: ${candidate}. ${messageSuffix}`);
       } catch {
-        return new Error(`Configured OpenCode binary not found: ${candidate}. ${messageSuffix}`);
+        return new Error(`Configured Rokcode binary not found: ${candidate}. ${messageSuffix}`);
       }
     })();
     error.code = 'OPENCODE_BINARY_INVALID';

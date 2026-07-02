@@ -140,7 +140,7 @@ export const OpenCodeCliSettings: React.FC = () => {
           <div className="typography-micro text-muted-foreground/70">
             {t('settings.rok-desktop.opencodeCli.tipPrefix')}
             {' '}
-            <span className="font-mono">OPENCODE_BINARY</span>
+            <span className="font-mono">ROKCODE_BINARY</span>
             {' '}
             {t('settings.rok-desktop.opencodeCli.tipMiddle')}
             {' '}

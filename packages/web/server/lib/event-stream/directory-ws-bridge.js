@@ -109,7 +109,7 @@ export function acceptDirectoryMessageStreamWsConnection({
             targetUrl = new URL(buildOpenCodeUrl('/event', ''));
           } catch {
             buildUrlFailed = true;
-            throw new Error('OpenCode service unavailable');
+            throw new Error('Rokcode service unavailable');
           }
 
           if (requestedDirectory) {
@@ -150,8 +150,8 @@ export function acceptDirectoryMessageStreamWsConnection({
             }
 
             closeWithInitialError({
-              message: buildUrlFailed ? 'OpenCode service unavailable' : 'Failed to connect to OpenCode event stream',
-              closeReason: buildUrlFailed ? 'OpenCode service unavailable' : 'Failed to connect to OpenCode event stream',
+              message: buildUrlFailed ? 'Rokcode service unavailable' : 'Failed to connect to OpenCode event stream',
+              closeReason: buildUrlFailed ? 'Rokcode service unavailable' : 'Failed to connect to OpenCode event stream',
               triggerHealthCheckFor: !buildUrlFailed,
             });
             return;

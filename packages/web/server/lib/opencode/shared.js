@@ -148,7 +148,7 @@ function readConfigFile(filePath) {
     return parseJsonc(normalized, [], { allowTrailingComma: true });
   } catch (error) {
     console.error(`Failed to read config file: ${filePath}`, error);
-    throw new Error('Failed to read OpenCode configuration');
+    throw new Error('Failed to read Rokcode configuration');
   }
 }
 
@@ -223,7 +223,7 @@ function writeConfig(config, filePath = CONFIG_FILE) {
     console.log(`Successfully wrote config file: ${filePath}`);
   } catch (error) {
     console.error(`Failed to write config file: ${filePath}`, error);
-    throw new Error('Failed to write OpenCode configuration');
+    throw new Error('Failed to write Rokcode configuration');
   }
 }
 

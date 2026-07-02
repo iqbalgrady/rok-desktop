@@ -171,7 +171,7 @@ function createCommand(commandName, config, workingDirectory, scope) {
   const layers = readConfigLayers(workingDirectory);
   const jsonSource = getJsonEntrySource(layers, 'command', commandName);
   if (jsonSource.exists) {
-    throw new Error(`Command ${commandName} already exists in opencode.json`);
+    throw new Error(`Command ${commandName} already exists in rokcode.json`);
   }
 
   let targetPath;
@@ -317,7 +317,7 @@ function deleteCommand(commandName, workingDirectory) {
     if (!jsonSource.config.command) jsonSource.config.command = {};
     delete jsonSource.config.command[commandName];
     writeConfig(jsonSource.config, jsonSource.path);
-    console.log(`Removed command from opencode.json: ${commandName}`);
+    console.log(`Removed command from rokcode.json: ${commandName}`);
     deleted = true;
   }
 

@@ -613,7 +613,7 @@ export const useSessionUIStore = create<SessionUIState>()((set, get) => ({
       }
       opencodeClient.setDirectory(resolvedDir ?? undefined)
     } catch (e) {
-      console.warn("Failed to set OpenCode directory for session switch:", e)
+      console.warn("Failed to set Rokcode directory for session switch:", e)
     }
 
     // Defer viewport anchor save for previous session — not needed for the

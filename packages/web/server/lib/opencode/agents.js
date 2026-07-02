@@ -394,7 +394,7 @@ function createAgent(agentName, config, workingDirectory, scope) {
   const layers = readConfigLayers(workingDirectory);
   const jsonSource = getJsonEntrySource(layers, 'agent', agentName);
   if (jsonSource.exists) {
-    throw new Error(`Agent ${agentName} already exists in opencode.json`);
+    throw new Error(`Agent ${agentName} already exists in rokcode.json`);
   }
 
   let targetPath;

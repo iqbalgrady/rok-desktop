@@ -18,7 +18,7 @@ function readAuthFile() {
     return JSON.parse(trimmed);
   } catch (error) {
     console.error('Failed to read auth file:', error);
-    throw new Error('Failed to read OpenCode auth configuration');
+    throw new Error('Failed to read Rokcode auth configuration');
   }
 }
 
@@ -38,7 +38,7 @@ function writeAuthFile(auth) {
     console.log('Successfully wrote auth file');
   } catch (error) {
     console.error('Failed to write auth file:', error);
-    throw new Error('Failed to write OpenCode auth configuration');
+    throw new Error('Failed to write Rokcode auth configuration');
   }
 }
 
