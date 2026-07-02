@@ -57,10 +57,10 @@ class RokcodeHttpClient {
 
   async get<T>(path: string): Promise<SdkResult<T>> { return this.request<T>(path) }
   async post<T>(path: string, body?: unknown): Promise<SdkResult<T>> {
-    return this.request<T>(path, { method: "POST", body: body ? JSON.stringify(body) : undefined })
+    return this.request<T>(path, { method: "POST", body: body ? JSON.stringify(body) : undefined, headers: body ? { "Content-Type": "application/json" } : undefined })
   }
   async patch<T>(path: string, body?: unknown): Promise<SdkResult<T>> {
-    return this.request<T>(path, { method: "PATCH", body: body ? JSON.stringify(body) : undefined })
+    return this.request<T>(path, { method: "PATCH", body: body ? JSON.stringify(body) : undefined, headers: body ? { "Content-Type": "application/json" } : undefined })
   }
   async delete<T>(path: string): Promise<SdkResult<T>> { return this.request<T>(path, { method: "DELETE" }) }
 
