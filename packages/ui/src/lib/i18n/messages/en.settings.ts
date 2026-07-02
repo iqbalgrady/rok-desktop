@@ -1297,7 +1297,7 @@ export const settingsDict = {
   'settings.mcp.page.advanced.custom': 'Custom',
   'settings.mcp.page.advanced.headers': 'headers',
   'settings.mcp.page.advanced.timeoutMs': 'Timeout (ms)',
-  'settings.mcp.page.advanced.timeoutHint': 'Leave blank to use OpenCode\'s default MCP timeout.',
+  'settings.mcp.page.advanced.timeoutHint': 'Leave blank to use Rokcode's default MCP timeout.',
   'settings.mcp.page.advanced.requestHeaders': 'Request Headers',
   'settings.mcp.page.advanced.headerNamePlaceholder': 'Header-Name',
   'settings.mcp.page.advanced.pasteHeaders': 'Paste headers',
