@@ -231,7 +231,7 @@ export function createRokcodeClient(options: RokcodeClientOptions): RokcodeClien
       create: (input) => http.post<Session>(`${API_PREFIX}/session`, input),
       get: (input) => http.get<Session>(`${API_PREFIX}/session/${sid(input)}${buildQuery(input)}`),
       prompt: (input) => http.post<PromptDelivery>(`${API_PREFIX}/session/${sid(input)}/prompt${buildQuery(input)}`, input),
-      promptAsync: (input) => http.post<PromptDelivery>(`${API_PREFIX}/session/${sid(input)}/prompt_async${buildQuery(input)}`, input),
+      promptAsync: (input) => http.post<PromptDelivery>(`${API_PREFIX}/session/${sid(input)}/prompt${buildQuery(input)}`, input),
       abort: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/interrupt${buildQuery(input)}`),
       fork: (input) => http.post<Session>(`${API_PREFIX}/session/${sid(input)}/fork${buildQuery(input)}`, input),
       compact: (input) => http.post<void>(`${API_PREFIX}/session/${sid(input)}/compact${buildQuery(input)}`),

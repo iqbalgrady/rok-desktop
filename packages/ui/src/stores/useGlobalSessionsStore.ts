@@ -166,6 +166,11 @@ const getSessionUpdatedAt = (session: Session): number => {
   return typeof createdAt === 'number' && Number.isFinite(createdAt) ? createdAt : 0;
 };
 
+const getSessionCreatedAt = (session: Session): number => {
+  const createdAt = session.time?.created;
+  return typeof createdAt === 'number' && Number.isFinite(createdAt) ? createdAt : 0;
+};
+
 const sortSessionsByUpdated = (sessions: Session[]): Session[] => {
   return [...sessions].sort((left, right) => {
     // Sort by created DESC (stable — doesn't re-sort on every SSE updated event)

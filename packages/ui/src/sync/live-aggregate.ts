@@ -14,6 +14,11 @@ const getSessionUpdatedAt = (session: Session): number => {
   return typeof createdAt === 'number' && Number.isFinite(createdAt) ? createdAt : 0
 }
 
+const getSessionCreatedAt = (session: Session): number => {
+  const createdAt = session.time?.created
+  return typeof createdAt === 'number' && Number.isFinite(createdAt) ? createdAt : 0
+}
+
 const getSessionSignature = (session: Session): string => {
   const directory = (session as Session & { directory?: string | null }).directory ?? ''
   const parentID = (session as Session & { parentID?: string | null }).parentID ?? ''
@@ -151,8 +156,8 @@ export function aggregateLiveSessions(states: Iterable<LiveStateSlice>): Session
 
   return Array.from(sessionsById.values()).sort((left, right) => {
     // Sort by created DESC (stable — doesn't re-sort on every SSE updated event)
-    const leftCreated = toFiniteNumber(left.time?.created) ?? 0
-    const rightCreated = toFiniteNumber(right.time?.created) ?? 0
+    const leftCreated = getSessionCreatedAt(left)
+    const rightCreated = getSessionCreatedAt(right)
     if (leftCreated !== rightCreated) return rightCreated - leftCreated
     return right.id.localeCompare(left.id)
   })

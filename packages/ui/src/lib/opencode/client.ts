@@ -844,19 +844,33 @@ class OpencodeService {
 
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
+        // V2 protocol format: { prompt: { text, files?, agents? }, id?, delivery?, resume? }
+        // model/agent/variant are set via switchModel/switchAgent endpoints, not in prompt payload
+        const promptText = [params.prefaceText?.trim(), params.text?.trim()]
+          .filter(Boolean).join('
+');
+        const promptFiles = [];
+        if (params.files && params.files.length > 0) {
+          for (const file of params.files) {
+            const filePart = await this.toNormalizedFilePartInput(file);
+            if (filePart.type === 'file') {
+              promptFiles.push({ uri: filePart.url ?? '', name: filePart.filename, description: filePart.description });
+            }
+          }
+        }
+        const promptAgents = (params.agentMentions ?? [])
+          .filter(m => m?.name)
+          .map(m => ({ name: m.name, ...(m.source ? { source: m.source } : {}) }));
         const result = await this.client.session.promptAsync({
           sessionID: params.id,
           ...(requestDirectory ? { directory: requestDirectory } : {}),
-          model: {
-            providerID: params.providerID,
-            modelID: params.modelID,
+          id: messageId,
+          prompt: {
+            text: promptText,
+            ...(promptFiles.length > 0 ? { files: promptFiles } : {}),
+            ...(promptAgents.length > 0 ? { agents: promptAgents } : {}),
           },
-          agent: params.agent,
-          variant: params.variant,
-          messageID: messageId,
           ...(params.delivery ? { delivery: params.delivery } : {}),
-          ...(params.format ? { format: params.format } : {}),
-          parts,
         });
         if (result.response instanceof Response) {
           response = result.response;
